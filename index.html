@@ -1889,20 +1889,84 @@
     let beltOffsetX = 0;
     let lastSpawnedKey = null;
 
+    const SPECIAL_GROUP_KEY = '__custom_group__';
     const menuStats = new Map();
     SUSHI_MENU.forEach(item => {
       menuStats.set(item.id, { spawnCount: 0, drought: 0 });
     });
+    menuStats.set(SPECIAL_GROUP_KEY, { spawnCount: 0, drought: 0 });
+    const customStats = new Map();
 
-    function pickWeightedMenu() {
-      const onRailIds = new Set(
-        activePlatesOnRail.filter(p => !p.data.isCustom).map(p => p.data.id)
+    function syncCustomStats() {
+      const currentIds = new Set(customImagesList.map(img => img.id));
+      for (const id of customStats.keys()) {
+        if (!currentIds.has(id)) customStats.delete(id);
+      }
+      const existingCounts = Array.from(customStats.values()).map(s => s.spawnCount);
+      const minCount = existingCounts.length > 0 ? Math.min(...existingCounts) : 0;
+
+      customImagesList.forEach(img => {
+        if (!customStats.has(img.id)) {
+          customStats.set(img.id, { spawnCount: minCount, drought: 0 });
+        }
+      });
+    }
+
+    function pickWeightedCustomImage() {
+      syncCustomStats();
+      if (customImagesList.length === 1) return customImagesList[0];
+
+      const onRailCustomIds = new Set(
+        activePlatesOnRail.filter(p => p.data.isCustom).map(p => p.data.customId)
       );
 
-      const allCounts = Array.from(menuStats.values()).map(s => s.spawnCount);
+      const allCounts = Array.from(customStats.values()).map(s => s.spawnCount);
       const minSpawnCount = Math.min(...allCounts);
 
-      const weights = SUSHI_MENU.map(item => {
+      const weights = customImagesList.map(img => {
+        const stat = customStats.get(img.id);
+        let weight = 10;
+
+        weight += Math.pow(stat.drought, 1.5);
+
+        const excess = stat.spawnCount - minSpawnCount;
+        if (excess > 0) {
+          weight /= (1 + excess * 1.2);
+        }
+
+        if (onRailCustomIds.has(img.id)) {
+          weight *= 0.08;
+        }
+
+        return Math.max(0.1, weight);
+      });
+
+      const totalWeight = weights.reduce((acc, w) => acc + w, 0);
+      let randomVal = Math.random() * totalWeight;
+
+      for (let i = 0; i < customImagesList.length; i++) {
+        randomVal -= weights[i];
+        if (randomVal <= 0) {
+          return customImagesList[i];
+        }
+      }
+      return customImagesList[customImagesList.length - 1];
+    }
+
+    function pickWeightedMenu() {
+      const hasCustom = customImagesList.length > 0;
+      const pool = hasCustom
+        ? [...SUSHI_MENU, { id: SPECIAL_GROUP_KEY, isCustomGroup: true }]
+        : SUSHI_MENU;
+
+      const onRailIds = new Set(
+        activePlatesOnRail.map(p => p.data.isCustom ? SPECIAL_GROUP_KEY : p.data.id)
+      );
+
+      const activeStats = pool.map(item => menuStats.get(item.id));
+      const minSpawnCount = Math.min(...activeStats.map(s => s.spawnCount));
+
+      const weights = pool.map(item => {
         const stat = menuStats.get(item.id);
         let weight = 10;
 
@@ -1927,7 +1991,11 @@
           weight *= 0.08;
         }
 
-        if (item.id === lastSpawnedKey) {
+        const isLastSpawned = item.isCustomGroup
+          ? (lastSpawnedKey && lastSpawnedKey.startsWith('custom_'))
+          : (item.id === lastSpawnedKey);
+
+        if (isLastSpawned) {
           weight = 0;
         }
 
@@ -1937,49 +2005,61 @@
       const totalWeight = weights.reduce((acc, w) => acc + w, 0);
       let randomVal = Math.random() * totalWeight;
 
-      for (let i = 0; i < SUSHI_MENU.length; i++) {
+      for (let i = 0; i < pool.length; i++) {
         randomVal -= weights[i];
         if (randomVal <= 0) {
-          return SUSHI_MENU[i];
+          return pool[i];
         }
       }
-      return SUSHI_MENU[SUSHI_MENU.length - 1];
+      return pool[pool.length - 1];
     }
 
     function generatePlateData() {
+      const chosen = pickWeightedMenu();
       let candidate = null;
       let candidateKey = '';
 
-      const canSpawnCustom = customImagesList.length > 0 && (!lastSpawnedKey || !lastSpawnedKey.startsWith('custom_'));
-      if (canSpawnCustom && Math.random() < 0.08) {
-        const randomCustom = customImagesList[Math.floor(Math.random() * customImagesList.length)];
+      menuStats.forEach((stat, key) => {
+        if (key === chosen.id) {
+          stat.spawnCount += 1;
+          stat.drought = 0;
+        } else {
+          stat.drought += 1;
+        }
+      });
+
+      if (chosen.isCustomGroup) {
+        const pickedCustom = pickWeightedCustomImage();
+
+        customImagesList.forEach(img => {
+          const cStat = customStats.get(img.id);
+          if (cStat) {
+            if (img.id === pickedCustom.id) {
+              cStat.spawnCount += 1;
+              cStat.drought = 0;
+            } else {
+              cStat.drought += 1;
+            }
+          }
+        });
+
         candidate = {
           isCustom: true,
+          customId: pickedCustom.id,
           name: '스페셜 초밥 ✨',
-          imageUrl: randomCustom.dataUrl,
+          imageUrl: pickedCustom.dataUrl,
           plateColor: '#bda460',
           rimColor: '#fff5cc'
         };
-        candidateKey = `custom_${randomCustom.id || 'special'}`;
+        candidateKey = `custom_${pickedCustom.id || 'special'}`;
       } else {
-        const chosenMenu = pickWeightedMenu();
-        const isSpecialMatch = chosenMenu.id === pickedSpecialId;
+        const isSpecialMatch = chosen.id === pickedSpecialId;
         candidate = {
           isCustom: false,
           isTodaySpecial: isSpecialMatch,
-          ...chosenMenu
+          ...chosen
         };
-        candidateKey = chosenMenu.id;
-
-        SUSHI_MENU.forEach(item => {
-          const stat = menuStats.get(item.id);
-          if (item.id === chosenMenu.id) {
-            stat.spawnCount += 1;
-            stat.drought = 0;
-          } else {
-            stat.drought += 1;
-          }
-        });
+        candidateKey = chosen.id;
       }
 
       lastSpawnedKey = candidateKey;
@@ -2523,7 +2603,7 @@
       window.open(twitterIntentUrl, '_blank', 'width=550,height=420,noopener,noreferrer');
     });
 
-    resetShopBtn.addEventListener('click', () => {
+resetShopBtn.addEventListener('click', () => {
       eatenPlatesCount = 0;
       eatenHistoryMap.clear();
       isShopClosed = false;
@@ -2534,6 +2614,7 @@
         stat.spawnCount = 0;
         stat.drought = 0;
       });
+      customStats.clear();
 
       updateRailCursorState();
       receiptModal.classList.remove('open');
