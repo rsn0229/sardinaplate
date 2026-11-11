@@ -928,14 +928,183 @@
       }
       .receipt-action-btn { font-size: 12px; padding: 11px 6px; }
     }
+
+    .call-bell-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 213, 107, 0.16);
+      border: 1px solid rgba(255, 213, 107, 0.45);
+      color: #ffe8a3;
+      font-size: 18px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s, transform 0.2s, opacity 0.2s;
+      opacity: 0.78;
+    }
+
+    .call-bell-btn:hover {
+      opacity: 1;
+      background: rgba(255, 213, 107, 0.3);
+      transform: scale(1.06);
+    }
+
+    .order-modal-card {
+      background: #281f1b;
+      border: 1px solid #574339;
+      border-radius: 18px;
+      width: 94%;
+      max-width: 560px;
+      max-height: 86vh;
+      display: flex;
+      flex-direction: column;
+      padding: 20px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.85);
+      color: #f5ebe6;
+    }
+
+    .order-kiosk-grid {
+      flex: 1;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      padding: 6px 4px;
+      margin-bottom: 14px;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(214, 159, 99, 0.28) transparent;
+    }
+
+    .order-kiosk-grid::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .order-kiosk-grid::-webkit-scrollbar-thumb {
+      background: rgba(214, 159, 99, 0.28);
+      border-radius: 10px;
+    }
+
+    .kiosk-menu-item {
+      position: relative;
+      background: #1e1613;
+      border: 2px solid #3d2f28;
+      border-radius: 12px;
+      padding: 14px 8px 10px 8px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .kiosk-menu-item:hover {
+      border-color: #8c6a56;
+      background: #261c18;
+      transform: translateY(-2px);
+    }
+
+    .kiosk-menu-item.selected {
+      border-color: #ffd56b;
+      background: #36261d;
+      box-shadow: 0 0 14px rgba(255, 213, 107, 0.28);
+    }
+
+    .kiosk-special-badge {
+      position: absolute;
+      top: 6px;
+      left: 6px;
+      background: linear-gradient(135deg, #ebd095, #cfa15a);
+      color: #3b1708;
+      font-size: 10px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 6px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.4);
+    }
+
+    .kiosk-visual-box {
+      height: 62px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 6px;
+      pointer-events: none;
+    }
+
+    .kiosk-visual-box svg {
+      max-width: 92px;
+      max-height: 58px;
+      width: auto;
+      height: auto;
+      filter: drop-shadow(0 3px 4px rgba(0,0,0,0.45));
+    }
+
+    .kiosk-visual-box img {
+      max-width: 78px;
+      max-height: 56px;
+      object-fit: contain;
+      filter: drop-shadow(0 3px 4px rgba(0,0,0,0.45));
+    }
+
+    .kiosk-menu-name {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: #f5ebe6;
+      text-align: center;
+      word-break: keep-all;
+      margin-bottom: 3px;
+    }
+
+    .kiosk-menu-price {
+      font-size: 11.5px;
+      font-weight: 600;
+      color: #d4ab75;
+    }
+
+    .order-submit-btn {
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: #fff;
+      font-size: 14.5px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.1s, opacity 0.2s;
+    }
+
+    .order-submit-btn:hover:not(:disabled) {
+      filter: brightness(1.1);
+    }
+
+    .order-submit-btn:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+
+    .order-submit-btn:disabled {
+      background: #4e3f38;
+      color: #8c7a70;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 560px) {
+      .call-bell-btn { width: 36px; height: 36px; font-size: 16px; }
+      .order-kiosk-grid { grid-template-columns: repeat(2, 1fr); }
+    }
   </style>
 </head>
 <body>
 
   <div class="shop-container">
-    <div class="top-right-controls">
+<div class="top-right-controls">
       <button class="checkout-btn" id="checkoutBtn" title="지금까지 먹은 접시 결제하기">🧾 결제하기</button>
       <button class="add-image-btn" id="openModalBtn" title="스페셜 메뉴 등록">+</button>
+      <button class="call-bell-btn" id="openOrderModalBtn" title="셰프에게 초밥 주문하기">🔔</button>
     </div>
 
     <div class="toast-notice" id="toastNotice">아직 식사 중이에요! 다 먹고 난 뒤에 가져올 수 있습니다.</div>
@@ -1073,7 +1242,16 @@
       </div>
     </div>
   </div>
-
+  <div class="modal-backdrop" id="orderModal">
+    <div class="order-modal-card">
+      <div class="modal-header" style="margin-bottom: 12px;">
+        <h3>초밥 주문하기</h3>
+        <button class="close-modal-btn" id="closeOrderModalBtn">&times;</button>
+      </div>
+      <div class="order-kiosk-grid" id="orderKioskGrid"></div>
+      <button class="order-submit-btn" id="submitOrderBtn" disabled>초밥을 선택해 주세요</button>
+    </div>
+  </div>
   <script>
     const SUSHI_MENU = [
       {
@@ -1708,12 +1886,13 @@
     const specialCandidates = SUSHI_MENU.filter(item => TODAY_SPECIAL_IDS.includes(item.id));
     const pickedFromSpecial2 = shuffleArray(specialCandidates).slice(0, 2);
 
-    const otherCandidates = SUSHI_MENU.filter(
+const otherCandidates = SUSHI_MENU.filter(
       item => !TODAY_SPECIAL_IDS.includes(item.id) && getPlatePrice(item) >= 4500
     );
     const pickedFromOthers2 = shuffleArray(otherCandidates).slice(0, 2);
 
     const leftFourMenus = shuffleArray([...pickedFromSpecial2, ...pickedFromOthers2]);
+    
     const pickedSpecialIds = new Set(leftFourMenus.map(item => item.id));
 
     const menuBoard = document.getElementById('menuBoard');
@@ -1980,7 +2159,6 @@
           weight += 120;
         }
 
-// [pickWeightedMenu 함수 내부 수정]
         const excess = stat.spawnCount - minSpawnCount;
         if (excess > 0) {
           if (pickedSpecialIds.has(item.id)) {
@@ -2110,6 +2288,115 @@
       return wrapper;
     }
 
+    let requestedOrderQueue = [];
+
+    function createPlateDataFromMenu(chosen) {
+      let candidate = null;
+      let candidateKey = '';
+
+      const statKey = chosen.isCustomItem ? SPECIAL_GROUP_KEY : chosen.id;
+      menuStats.forEach((stat, key) => {
+        if (key === statKey) {
+          stat.spawnCount += 1;
+          stat.drought = 0;
+        } else {
+          stat.drought += 1;
+        }
+      });
+
+      if (chosen.isCustomItem) {
+        candidate = {
+          isCustom: true,
+          customId: chosen.customId,
+          name: '스페셜 초밥 ✨',
+          imageUrl: chosen.imageUrl,
+          plateColor: '#bda460',
+          rimColor: '#fff5cc'
+        };
+        candidateKey = `custom_${chosen.customId || 'special'}`;
+      } else if (chosen.isCustomGroup) {
+        const pickedCustom = pickWeightedCustomImage();
+
+        customImagesList.forEach(img => {
+          const cStat = customStats.get(img.id);
+          if (cStat) {
+            if (img.id === pickedCustom.id) {
+              cStat.spawnCount += 1;
+              cStat.drought = 0;
+            } else {
+              cStat.drought += 1;
+            }
+          }
+        });
+
+        candidate = {
+          isCustom: true,
+          customId: pickedCustom.id,
+          name: '스페셜 초밥 ✨',
+          imageUrl: pickedCustom.dataUrl,
+          plateColor: '#bda460',
+          rimColor: '#fff5cc'
+        };
+        candidateKey = `custom_${pickedCustom.id || 'special'}`;
+      } else {
+        const isSpecialMatch = pickedSpecialIds.has(chosen.id);
+        candidate = {
+          isCustom: false,
+          isTodaySpecial: isSpecialMatch,
+          ...chosen
+        };
+        candidateKey = chosen.id;
+      }
+
+      lastSpawnedKey = candidateKey;
+      return candidate;
+    }
+
+    function generatePlateData() {
+      if (requestedOrderQueue.length > 0) {
+        const orderedMenu = requestedOrderQueue.shift();
+        return createPlateDataFromMenu(orderedMenu);
+      }
+      const chosen = pickWeightedMenu();
+      return createPlateDataFromMenu(chosen);
+    }
+
+    function buildPlateElement(plateData) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'sushi-item';
+      if (isCurrentlyEating || isShopClosed) wrapper.classList.add('disabled-pick');
+
+      const label = document.createElement('div');
+      label.className = 'sushi-label';
+      if (plateData.isTodaySpecial) {
+        label.classList.add('today-special-label');
+        label.textContent = `[오늘의 특선] ${plateData.name}`;
+      } else {
+        label.textContent = plateData.name;
+      }
+      wrapper.appendChild(label);
+
+      const foodWrap = document.createElement('div');
+      foodWrap.className = 'food-visual-wrap';
+
+      if (plateData.isCustom) {
+        const img = document.createElement('img');
+        img.className = 'custom-sushi-img';
+        img.src = plateData.imageUrl;
+        foodWrap.appendChild(img);
+      } else {
+        foodWrap.innerHTML = plateData.svg;
+      }
+      wrapper.appendChild(foodWrap);
+
+      const plateBase = document.createElement('div');
+      plateBase.className = 'plate-base-wrap';
+      plateBase.innerHTML = createPerspectivePlateSVG(plateData.plateColor, plateData.rimColor);
+      wrapper.appendChild(plateBase);
+
+      return wrapper;
+    }
+
     function spawnPlateAt(xPos) {
       const data = generatePlateData();
       const el = buildPlateElement(data);
@@ -2119,6 +2406,27 @@
       const plateObj = { el, data, x: xPos };
       el.addEventListener('click', () => handlePickPlate(plateObj));
       activePlatesOnRail.push(plateObj);
+    }
+
+    function enqueueRequestedSushi(menuItem) {
+      const offscreenPlates = activePlatesOnRail.filter(p => p.x < -40 && !p.isOrdered);
+      if (offscreenPlates.length > 0) {
+
+        offscreenPlates.sort((a, b) => b.x - a.x);
+        const targetPlate = offscreenPlates[0];
+
+        const newData = createPlateDataFromMenu(menuItem);
+        const newEl = buildPlateElement(newData);
+        newEl.style.left = `${targetPlate.x}px`;
+        platesLayer.replaceChild(newEl, targetPlate.el);
+
+        targetPlate.data = newData;
+        targetPlate.el = newEl;
+        targetPlate.isOrdered = true;
+        newEl.addEventListener('click', () => handlePickPlate(targetPlate));
+      } else {
+        requestedOrderQueue.push(menuItem);
+      }
     }
 
     function initRail() {
@@ -2678,6 +2986,110 @@ resetShopBtn.addEventListener('click', () => {
     initDatabase().then(() => {
       initRail();
       requestAnimationFrame(animateRail);
+    });
+
+    const openOrderModalBtn = document.getElementById('openOrderModalBtn');
+    const closeOrderModalBtn = document.getElementById('closeOrderModalBtn');
+    const orderModal = document.getElementById('orderModal');
+    const orderKioskGrid = document.getElementById('orderKioskGrid');
+    const submitOrderBtn = document.getElementById('submitOrderBtn');
+
+    let selectedOrderItem = null;
+
+    function renderOrderKioskList() {
+      orderKioskGrid.innerHTML = '';
+      selectedOrderItem = null;
+      submitOrderBtn.disabled = true;
+      submitOrderBtn.textContent = '초밥을 선택해 주세요';
+
+      const kioskList = [
+        ...SUSHI_MENU.map(item => ({
+          ...item,
+          isCustomItem: false,
+          price: getPlatePrice(item),
+          isSpecial: pickedSpecialIds.has(item.id)
+        })),
+        ...customImagesList.map((img, idx) => ({
+          id: `custom_${img.id}`,
+          isCustomItem: true,
+          customId: img.id,
+          name: `스페셜 초밥 #${idx + 1}`,
+          imageUrl: img.dataUrl,
+          plateColor: '#bda460',
+          rimColor: '#fff5cc',
+          price: 5500,
+          isSpecial: true
+        }))
+      ];
+
+      kioskList.forEach(menu => {
+        const card = document.createElement('div');
+        card.className = 'kiosk-menu-item';
+
+        if (menu.isSpecial) {
+          const badge = document.createElement('span');
+          badge.className = 'kiosk-special-badge';
+          badge.textContent = menu.isCustomItem ? '스페셜' : '오늘의특선';
+          card.appendChild(badge);
+        }
+
+        const visualBox = document.createElement('div');
+        visualBox.className = 'kiosk-visual-box';
+        if (menu.isCustomItem) {
+          const img = document.createElement('img');
+          img.src = menu.imageUrl;
+          visualBox.appendChild(img);
+        } else {
+          visualBox.innerHTML = menu.svg;
+        }
+        card.appendChild(visualBox);
+
+        const nameEl = document.createElement('div');
+        nameEl.className = 'kiosk-menu-name';
+        nameEl.textContent = menu.name;
+        card.appendChild(nameEl);
+
+        const priceEl = document.createElement('div');
+        priceEl.className = 'kiosk-menu-price';
+        priceEl.textContent = formatCurrency(menu.price);
+        card.appendChild(priceEl);
+
+        card.addEventListener('click', () => {
+          orderKioskGrid.querySelectorAll('.kiosk-menu-item').forEach(el => {
+            el.classList.remove('selected');
+          });
+          card.classList.add('selected');
+          selectedOrderItem = menu;
+          submitOrderBtn.disabled = false;
+          submitOrderBtn.textContent = `[${menu.name}] 요청하기`;
+        });
+
+        orderKioskGrid.appendChild(card);
+      });
+    }
+
+    openOrderModalBtn.addEventListener('click', () => {
+      if (isShopClosed) {
+        showToast('오늘의 영업이 종료되어 주문을 받기 어렵습니다!');
+        return;
+      }
+      renderOrderKioskList();
+      orderModal.classList.add('open');
+    });
+
+    closeOrderModalBtn.addEventListener('click', () => {
+      orderModal.classList.remove('open');
+    });
+
+    orderModal.addEventListener('click', (e) => {
+      if (e.target === orderModal) orderModal.classList.remove('open');
+    });
+
+    submitOrderBtn.addEventListener('click', () => {
+      if (!selectedOrderItem) return;
+      enqueueRequestedSushi(selectedOrderItem);
+      orderModal.classList.remove('open');
+      showToast(`🔔 [${selectedOrderItem.name}] 주문 완료! 곧 레일 왼쪽에서 등장합니다.`);
     });
   </script>
 </body>
