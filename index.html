@@ -1675,14 +1675,14 @@
     function getPlatePrice(plateData) {
       if (plateData.isCustom) return 3500;
       const colorPriceMap = {
-        '#6b9ac4': 1200,
-        '#507dbc': 1500,
-        '#3b6e8c': 1800,
-        '#c94a38': 2200,
-        '#a82020': 2600,
-        '#2d3130': 3000,
-        '#d49b35': 3500,
-        '#d4af37': 3500
+        '#6b9ac4': 2000,
+        '#507dbc': 2500,
+        '#3b6e8c': 2900,
+        '#c94a38': 3000,
+        '#a82020': 3500,
+        '#2d3130': 4500,
+        '#d49b35': 5000,
+        '#d4af37': 5500
       };
       return colorPriceMap[plateData.plateColor] || 2000;
     }
