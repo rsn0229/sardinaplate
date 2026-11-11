@@ -1,0 +1,2556 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>사르디나 회전초밥</title>
+  <style>
+    :root {
+      --bg-wall: #281e1a;
+      --wood-light: #d69f63;
+      --wood-mid: #b57d43;
+      --wood-dark: #6e441f;
+      --rail-bg: #2b2d2f;
+      --rail-track: #222426;
+      --accent: #e06d53;
+    }
+
+    * {
+      box-sizing: border-box;
+      user-select: none;
+      -webkit-user-drag: none;
+    }
+
+    body, html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-wall);
+      color: #fff;
+    }
+
+    .shop-container {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      height: 100%;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .wall-area {
+      flex: 0.85;
+      background: radial-gradient(circle at 50% 60%, #4a382e 0%, #221915 85%);
+      position: relative;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      border-bottom: 10px solid var(--wood-dark);
+      box-shadow: inset 0 -15px 35px rgba(0,0,0,0.6);
+      z-index: 1;
+    }
+
+    .menu-board {
+      display: flex;
+      gap: 14px;
+      position: absolute;
+      top: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      opacity: 0.82;
+    }
+
+    .menu-plaque {
+      width: 40px;
+      height: 118px;
+      background: linear-gradient(180deg, #d4ab75 0%, #bd9056 100%);
+      border: 2px solid #7c562b;
+      border-radius: 3px;
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12.5px;
+      color: #2b1d0e;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      box-shadow: 0 6px 12px rgba(0,0,0,0.45);
+      padding: 4px 0;
+    }
+
+    .menu-plaque.special-plaque {
+      background: linear-gradient(180deg, #ebd095 0%, #cfa15a 100%);
+      border-color: #a67326;
+      color: #4a1c0b;
+      box-shadow: 0 6px 15px rgba(255, 200, 100, 0.25);
+    }
+
+    .conveyor-section {
+      height: 165px;
+      background: linear-gradient(180deg, #434649 0%, #2c2e30 25%, #1f2022 100%);
+      position: relative;
+      border-top: 5px solid #5a5d60;
+      border-bottom: 12px solid #333538;
+      display: flex;
+      align-items: center;
+      box-shadow: inset 0 10px 20px rgba(0,0,0,0.7), 0 10px 25px rgba(0,0,0,0.5);
+      overflow: visible;
+      z-index: 20;
+    }
+
+    .rail-belt {
+      position: absolute;
+      bottom: 16px;
+      left: 0;
+      width: 100%;
+      height: 58px;
+      background: repeating-linear-gradient(
+        90deg,
+        #2b2d30 0px,
+        #2b2d30 39px,
+        #18191b 39px,
+        #18191b 42px
+      );
+      border-top: 3px solid #3c3f42;
+      border-bottom: 4px solid #141516;
+      box-shadow: inset 0 6px 12px rgba(0,0,0,0.6);
+    }
+
+    .plates-layer {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      z-index: 10;
+      overflow: visible;
+    }
+
+    .sushi-item {
+      position: absolute;
+      bottom: 22px;
+      width: 150px;
+      height: 135px;
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.2s;
+      will-change: left, transform;
+    }
+
+    .sushi-item:hover {
+      transform: translateY(-6px) scale(1.05);
+      filter: drop-shadow(0 8px 14px rgba(255, 220, 160, 0.4));
+      z-index: 50;
+    }
+
+    .sushi-item.disabled-pick {
+      cursor: not-allowed;
+    }
+
+    .sushi-item.disabled-pick:hover {
+      transform: none;
+      filter: none;
+    }
+
+    .sushi-label {
+      position: absolute;
+      top: -18px;
+      background: rgba(15, 12, 10, 0.94);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 4px 11px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.55);
+      white-space: nowrap;
+      opacity: 0;
+      transform: translateY(4px);
+      transition: opacity 0.2s, transform 0.2s;
+      pointer-events: none;
+      z-index: 100;
+    }
+
+    .sushi-label.today-special-label {
+      border-color: #ffd56b;
+      color: #ffe8a3;
+    }
+
+    .sushi-item:hover .sushi-label {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .active-sushi-display .sushi-label {
+      display: none;
+    }
+
+    .food-visual-wrap {
+      position: relative;
+      z-index: 2;
+      margin-bottom: -24px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .custom-sushi-img {
+      max-width: 108px;
+      max-height: 82px;
+      width: auto;
+      height: auto;
+      object-fit: contain;
+      display: block;
+      filter: drop-shadow(0 4px 5px rgba(0,0,0,0.45));
+      transform: translateY(-4px);
+    }
+
+    .plate-base-wrap {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      justify-content: center;
+      pointer-events: none;
+    }
+
+    .counter-table {
+      flex: 1.45;
+      background: linear-gradient(180deg, #6e4823 0%, #b88149 18%, #d69f65 75%, #c2894e 100%);
+      border-top: 10px solid #4d3014;
+      border-bottom: 18px solid #5a3818;
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1.5fr 1fr;
+      align-items: end;
+      padding: 20px 40px 28px 40px;
+      box-shadow: inset 0 20px 40px rgba(0,0,0,0.45);
+      perspective: 900px;
+      z-index: 5;
+    }
+
+    .left-stack-zone {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      padding-bottom: 8px;
+    }
+
+    .stack-area-row {
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 6px;
+      position: relative;
+    }
+
+    .plate-stack-wrapper {
+      position: relative;
+      width: 150px;
+      height: 260px;
+      display: flex;
+      justify-content: center;
+      overflow: visible;
+    }
+
+    .stacked-plate-svg {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 145px;
+      height: 36px;
+      filter: drop-shadow(0 4px 5px rgba(0,0,0,0.38));
+      animation: dropPlate 0.32s cubic-bezier(0.18, 0.89, 0.32, 1.25) forwards;
+    }
+
+    @keyframes dropPlate {
+      from {
+        transform: translateX(-50%) translateY(-40px) scale(1.06);
+        opacity: 0;
+      }
+      to {
+        transform: translateX(-50%) translateY(0) scale(1);
+        opacity: 1;
+      }
+    }
+
+    .stack-count-badge {
+      margin-top: 10px;
+      background: rgba(40, 26, 14, 0.82);
+      color: #f7e9dc;
+      padding: 5px 15px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.3);
+      z-index: 35;
+      white-space: nowrap;
+    }
+
+    .center-eating-zone {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+      position: relative;
+      height: 100%;
+      padding-bottom: 6px;
+    }
+
+    .mat-stage {
+      position: relative;
+      width: 340px;
+      height: 185px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      perspective: 650px;
+    }
+
+    .bamboo-mat-surface {
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        0deg,
+        #382c22 0px,
+        #382c22 5px,
+        #271e17 5px,
+        #271e17 7px
+      );
+      border-radius: 10px;
+      border: 4px solid #1f1711;
+      border-bottom-width: 8px;
+      transform: rotateX(48deg);
+      transform-origin: center bottom;
+      box-shadow: 0 18px 28px rgba(0,0,0,0.55);
+    }
+
+    .eating-slot {
+      position: relative;
+      z-index: 5;
+      width: 220px;
+      height: 145px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+    }
+
+    .active-sushi-display {
+      transform: scale(1.26);
+      animation: bringToTable 0.35s cubic-bezier(0.2, 0.9, 0.3, 1.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-end;
+    }
+
+    @keyframes bringToTable {
+      from {
+        transform: translateY(-85px) scale(0.95);
+        opacity: 0.4;
+      }
+      to {
+        transform: translateY(0) scale(1.26);
+        opacity: 1;
+      }
+    }
+
+    .eating-status-bar {
+      position: absolute;
+      bottom: 8px;
+      width: 72%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      z-index: 10;
+    }
+
+    .eating-status-text {
+      font-size: 11.5px;
+      color: #ffe4c4;
+      font-weight: 600;
+      text-shadow: 0 1px 4px rgba(0,0,0,0.9);
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.65);
+      border-radius: 4px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .progress-fill {
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, #ff9a76, #ff6b6b);
+      transition: width 0.15s linear;
+    }
+
+    .chopsticks-set {
+      margin-top: 10px;
+      position: relative;
+      width: 250px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .chopstick-rest {
+      position: absolute;
+      left: 38px;
+      width: 24px;
+      height: 14px;
+      background: linear-gradient(180deg, #3c3c3c 0%, #1a1a1a 100%);
+      border-radius: 4px 4px 2px 2px;
+      box-shadow: 0 5px 8px rgba(0,0,0,0.5);
+      transform: perspective(100px) rotateX(25deg);
+    }
+
+    .chopsticks {
+      width: 225px;
+      height: 14px;
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: 2px;
+    }
+
+    .stick {
+      width: 100%;
+      height: 4.5px;
+      background: linear-gradient(90deg, #4a2c11 0%, #c88f52 35%, #e8bc84 100%);
+      border-radius: 3px;
+      box-shadow: 0 3px 5px rgba(0,0,0,0.45);
+      transform-origin: 96% 50%;
+      transition: transform 0.2s ease;
+    }
+
+    .chopsticks-set.eating-motion .stick-top {
+      animation: topStickPinch 1.3s ease-in-out infinite;
+    }
+
+    .chopsticks-set.eating-motion .stick-bottom {
+      animation: bottomStickPinch 1.3s ease-in-out infinite;
+    }
+
+    @keyframes topStickPinch {
+      0%, 100% { transform: rotate(0deg); }
+      40% { transform: rotate(3.8deg); }
+      65% { transform: rotate(-0.6deg); }
+    }
+
+    @keyframes bottomStickPinch {
+      0%, 100% { transform: rotate(0deg); }
+      40% { transform: rotate(-1.5deg); }
+      65% { transform: rotate(0.4deg); }
+    }
+
+    .right-side-zone {
+      height: 100%;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 24px;
+      padding-bottom: 12px;
+      position: relative;
+    }
+
+    .side-vessel-wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      filter: drop-shadow(0 12px 14px rgba(0,0,0,0.45));
+      transition: transform 0.3s ease, margin 0.3s ease;
+    }
+
+    .miso-vessel { z-index: 3; }
+    .tea-vessel { z-index: 2; }
+
+    .steam-wrap {
+      position: absolute;
+      top: -18px;
+      display: flex;
+      gap: 10px;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    .steam-line {
+      width: 4px;
+      height: 24px;
+      background: rgba(255,255,255,0.38);
+      border-radius: 10px;
+      filter: blur(3px);
+      animation: steamRise 2.6s infinite ease-in-out;
+    }
+
+    .steam-line:nth-child(2) {
+      animation-delay: 1.3s;
+      height: 19px;
+    }
+
+    @keyframes steamRise {
+      0% { transform: translateY(8px) scaleX(1); opacity: 0; }
+      50% { transform: translateY(-6px) scaleX(1.5); opacity: 0.65; }
+      100% { transform: translateY(-20px) scaleX(1); opacity: 0; }
+    }
+
+    .toast-notice {
+      position: fixed;
+      top: 25px;
+      left: 50%;
+      transform: translateX(-50%) translateY(-20px);
+      background: rgba(28, 22, 18, 0.94);
+      color: #ffe8d1;
+      padding: 10px 22px;
+      border-radius: 25px;
+      font-size: 13px;
+      border: 1px solid rgba(255,255,255,0.18);
+      box-shadow: 0 6px 16px rgba(0,0,0,0.5);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+      z-index: 300;
+      white-space: nowrap;
+    }
+
+    .toast-notice.show {
+      opacity: 1;
+      transform: translateX(-50%) translateY(0);
+    }
+
+    .top-right-controls {
+      position: fixed;
+      top: 18px;
+      right: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      z-index: 120;
+    }
+
+    .checkout-btn {
+      height: 42px;
+      padding: 0 16px;
+      border-radius: 21px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 13.5px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s, transform 0.2s, opacity 0.2s;
+      opacity: 0.65;
+    }
+
+    .checkout-btn:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.04);
+    }
+
+    .add-image-btn {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 22px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s, transform 0.2s, opacity 0.2s;
+      opacity: 0.5;
+    }
+
+    .add-image-btn:hover {
+      opacity: 1;
+      background: rgba(255, 255, 255, 0.25);
+      transform: scale(1.06);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.76);
+      backdrop-filter: blur(5px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 200;
+      padding: 16px;
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #2c2420;
+      border: 1px solid #4e3f38;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 420px;
+      padding: 22px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.65);
+      color: #f5ebe6;
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 17px;
+    }
+
+    .close-modal-btn {
+      background: none;
+      border: none;
+      color: #aaa;
+      font-size: 22px;
+      cursor: pointer;
+    }
+
+    .upload-label {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      text-align: center;
+      background: var(--accent);
+      color: #fff;
+      font-weight: 600;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 14px;
+      transition: filter 0.2s;
+    }
+
+    .upload-label:hover {
+      filter: brightness(1.1);
+    }
+
+    #imageFileInput {
+      display: none;
+    }
+
+    .saved-images-grid {
+      margin-top: 16px;
+      max-height: 190px;
+      overflow-y: auto;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 4px;
+    }
+
+    .saved-thumb {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #555;
+      background: repeating-conic-gradient(#333 0% 25%, #222 0% 50%) 50% / 12px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .saved-thumb img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .delete-thumb-btn {
+      position: absolute;
+      top: 3px;
+      right: 3px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: rgba(0,0,0,0.8);
+      color: #ff7b7b;
+      border: none;
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .receipt-modal-card {
+      background: #231b17;
+      border: 1px solid #523e35;
+      border-radius: 18px;
+      width: 100%;
+      max-width: 470px;
+      max-height: 92vh;
+      display: flex;
+      flex-direction: column;
+      padding: 18px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.8);
+      color: #f5ebe6;
+    }
+
+    .receipt-preview-scroll {
+      flex: 1;
+      overflow-y: auto;
+      border-radius: 12px;
+      background: #1a1310;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 6px;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+
+    .receipt-preview-scroll,
+    .saved-images-grid {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(214, 159, 99, 0.28) transparent;
+    }
+
+    .receipt-preview-scroll::-webkit-scrollbar,
+    .saved-images-grid::-webkit-scrollbar {
+      width: 4px;
+      height: 4px;
+    }
+
+    .receipt-preview-scroll::-webkit-scrollbar-track,
+    .saved-images-grid::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .receipt-preview-scroll::-webkit-scrollbar-thumb,
+    .saved-images-grid::-webkit-scrollbar-thumb {
+      background: rgba(214, 159, 99, 0.28);
+      border-radius: 10px;
+    }
+
+    .receipt-rendered-img {
+      width: 100%;
+      height: auto;
+      border-radius: 8px;
+      display: block;
+      user-select: auto !important;
+      -webkit-user-select: auto !important;
+      -webkit-touch-callout: default !important;
+      pointer-events: auto !important;
+    }
+
+    .receipt-mobile-tip {
+      font-size: 11.5px;
+      color: #bfa89b;
+      text-align: center;
+      margin: 8px 0 4px 0;
+    }
+
+    .receipt-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .receipt-action-btn {
+      flex: 1;
+      padding: 12px 10px;
+      border-radius: 10px;
+      border: none;
+      font-size: 13.5px;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: filter 0.2s, transform 0.1s;
+    }
+
+    .receipt-action-btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn-save-img {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-share-text {
+      background: #d4ab75;
+      color: #2b1d0e;
+    }
+
+    .btn-reset-shop {
+      background: #42332c;
+      color: #e2d1c7;
+      flex: 0.7;
+    }
+
+    @media (max-width: 900px) {
+      .wall-area {
+        flex: 0.95;
+      }
+      .menu-board {
+        top: auto;
+        bottom: 22px;
+        transform: translateX(-50%) scale(0.95);
+      }
+
+      .counter-table {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        align-items: center;
+        padding: 15px 16px 24px 16px;
+      }
+
+      .center-eating-zone {
+        width: 100%;
+        height: auto;
+        z-index: 20;
+        margin-top: auto;
+      }
+      .mat-stage {
+        width: 280px;
+        height: 165px;
+      }
+      .chopsticks-set { width: 220px; }
+      .chopsticks { width: 195px; }
+
+      .left-stack-zone {
+        position: absolute;
+        left: 16px;
+        bottom: 175px;
+        height: auto;
+        z-index: 10;
+      }
+      .stacked-plate-svg { width: 120px; height: 32px; }
+      .plate-stack-wrapper { width: 120px; height: 200px; }
+
+      .right-side-zone {
+        position: absolute;
+        right: 18px;
+        bottom: 175px;
+        height: auto;
+        gap: 0;
+        z-index: 10;
+      }
+      .miso-vessel {
+        z-index: 4;
+        transform: translate(-6px, 10px) scale(0.92);
+      }
+      .tea-vessel {
+        z-index: 2;
+        margin-left: -45px;
+        transform: translate(12px, -22px) scale(0.84);
+      }
+    }
+
+    @media (max-width: 560px) {
+      .wall-area {
+        flex: 1.05;
+      }
+      .menu-board {
+        bottom: 20px;
+        gap: 10px;
+        transform: translateX(-50%) scale(0.92);
+      }
+      .top-right-controls { top: 12px; right: 12px; gap: 6px; }
+      .checkout-btn { height: 36px; padding: 0 12px; font-size: 12px; }
+      .add-image-btn { width: 36px; height: 36px; font-size: 19px; }
+
+      .mat-stage { width: 240px; height: 150px; }
+      .active-sushi-display { transform: scale(1.15); }
+      .chopsticks-set { width: 190px; }
+      .chopsticks { width: 170px; }
+      .chopstick-rest { left: 28px; }
+
+      .left-stack-zone {
+        left: 12px;
+        bottom: 185px;
+      }
+      .stacked-plate-svg { width: 105px; height: 28px; }
+      .plate-stack-wrapper { width: 105px; height: 190px; }
+      .stack-count-badge { font-size: 11.5px; padding: 4px 11px; }
+
+      .right-side-zone {
+        right: 12px;
+        bottom: 185px;
+      }
+      .miso-vessel { transform: translate(-4px, 12px) scale(0.85); }
+      .tea-vessel {
+        margin-left: -50px;
+        transform: translate(14px, -18px) scale(0.76);
+      }
+      .receipt-action-btn { font-size: 12px; padding: 11px 6px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="shop-container">
+    <div class="top-right-controls">
+      <button class="checkout-btn" id="checkoutBtn" title="지금까지 먹은 접시 결제하기">🧾 결제하기</button>
+      <button class="add-image-btn" id="openModalBtn" title="스페셜 메뉴 등록">+</button>
+    </div>
+
+    <div class="toast-notice" id="toastNotice">아직 식사 중이에요! 다 먹고 난 뒤에 가져올 수 있습니다.</div>
+
+    <div class="wall-area">
+      <div class="menu-board" id="menuBoard"></div>
+    </div>
+
+    <div class="conveyor-section">
+      <div class="rail-belt" id="railBelt"></div>
+      <div class="plates-layer" id="platesLayer"></div>
+    </div>
+
+    <div class="counter-table">
+      <div class="left-stack-zone">
+        <div class="stack-area-row">
+          <div class="plate-stack-wrapper" id="plateStackWrapper"></div>
+        </div>
+        <div class="stack-count-badge" id="stackCountBadge">먹은 접시: 0접시</div>
+      </div>
+
+      <div class="center-eating-zone">
+        <div class="mat-stage">
+          <div class="bamboo-mat-surface"></div>
+          <div class="eating-slot" id="eatingSlot"></div>
+          <div class="eating-status-bar" id="eatingStatusBar">
+            <span class="eating-status-text" id="eatingStatusText">음미하는 중...</span>
+            <div class="progress-track">
+              <div class="progress-fill" id="progressFill"></div>
+            </div>
+          </div>
+        </div>
+
+        <div class="chopsticks-set" id="chopsticksSet">
+          <div class="chopstick-rest"></div>
+          <div class="chopsticks">
+            <div class="stick stick-top"></div>
+            <div class="stick stick-bottom"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="right-side-zone">
+        <div class="side-vessel-wrap miso-vessel" title="따뜻한 장국">
+          <div class="steam-wrap">
+            <div class="steam-line"></div>
+            <div class="steam-line"></div>
+          </div>
+          <svg width="125" height="95" viewBox="0 0 125 95">
+            <ellipse cx="62.5" cy="86" rx="36" ry="7" fill="rgba(0,0,0,0.4)" />
+            <path d="M 38 74 L 42 84 C 42 88, 83 88, 83 84 L 87 74 Z" fill="#181311" />
+            <path d="M 12 26 C 12 66, 35 79, 62.5 79 C 90 79, 113 66, 113 26 Z" fill="url(#lacquerBody)" />
+            <path d="M 23 50 Q 62.5 60 102 50" stroke="#c89d54" stroke-width="1.5" fill="none" opacity="0.55" />
+            <ellipse cx="62.5" cy="26" rx="50.5" ry="15" fill="#8f2916" stroke="#3a140d" stroke-width="2" />
+            <ellipse cx="62.5" cy="26.5" rx="46.5" ry="12.5" fill="#5e190c" />
+            <ellipse cx="62.5" cy="28" rx="44" ry="10.5" fill="url(#misoSurface)" />
+            <polygon points="42,27 51,25 53,30 44,32" fill="#fffdf7" opacity="0.9" />
+            <polygon points="68,29 76,28 77,32 69,33" fill="#fffdf7" opacity="0.85" />
+            <ellipse cx="58" cy="25" rx="4.5" ry="2" fill="none" stroke="#4d8b31" stroke-width="2" />
+            <ellipse cx="75" cy="25" rx="4" ry="1.8" fill="none" stroke="#5ca33c" stroke-width="1.8" />
+            <ellipse cx="52" cy="32" rx="3.8" ry="1.6" fill="none" stroke="#4d8b31" stroke-width="1.8" />
+            <defs>
+              <linearGradient id="lacquerBody" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#1a1412" />
+                <stop offset="30%" stop-color="#332622" />
+                <stop offset="75%" stop-color="#171210" />
+                <stop offset="100%" stop-color="#0d0a09" />
+              </linearGradient>
+              <radialGradient id="misoSurface" cx="45%" cy="45%" r="55%">
+                <stop offset="0%" stop-color="#db964f" />
+                <stop offset="75%" stop-color="#b56c2b" />
+                <stop offset="100%" stop-color="#8c4d19" />
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+
+        <div class="side-vessel-wrap tea-vessel" title="따뜻한 녹차">
+          <div class="steam-wrap" style="top: -12px;">
+            <div class="steam-line" style="height: 18px;"></div>
+          </div>
+          <svg width="85" height="95" viewBox="0 0 85 95">
+            <ellipse cx="42.5" cy="87" rx="26" ry="5.5" fill="rgba(0,0,0,0.4)" />
+            <path d="M 24 78 L 26 85 C 26 88, 59 88, 59 85 L 61 78 Z" fill="#8c8376" />
+            <path d="M 15 20 L 20 79 C 20 85, 65 85, 65 79 L 70 20 Z" fill="url(#ceramicBody)" />
+            <path d="M 17 42 Q 42.5 47 68 42" stroke="#6f7863" stroke-width="3.5" fill="none" opacity="0.65" />
+            <path d="M 18 50 Q 42.5 55 67 50" stroke="#6f7863" stroke-width="1.5" fill="none" opacity="0.5" />
+            <ellipse cx="42.5" cy="20" rx="27.5" ry="8.5" fill="#e6e1d6" stroke="#b5aea0" stroke-width="2" />
+            <ellipse cx="42.5" cy="20.5" rx="25" ry="7" fill="#b8b1a3" />
+            <ellipse cx="42.5" cy="22" rx="23.5" ry="5.8" fill="url(#greenTeaSurface)" />
+            <defs>
+              <linearGradient id="ceramicBody" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#c9c3b6" />
+                <stop offset="32%" stop-color="#e8e3d8" />
+                <stop offset="80%" stop-color="#b5afa2" />
+                <stop offset="100%" stop-color="#969083" />
+              </linearGradient>
+              <radialGradient id="greenTeaSurface" cx="40%" cy="40%" r="60%">
+                <stop offset="0%" stop-color="#8aad53" />
+                <stop offset="100%" stop-color="#4e6924" />
+              </radialGradient>
+            </defs>
+          </svg>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="imageModal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3>스페셜 메뉴 등록</h3>
+        <button class="close-modal-btn" id="closeModalBtn">&times;</button>
+      </div>
+      <label for="imageFileInput" class="upload-label">+ 이미지 파일 추가하기</label>
+      <input type="file" id="imageFileInput" accept="image/*" multiple>
+      <div class="saved-images-grid" id="savedImagesGrid"></div>
+    </div>
+  </div>
+
+  <div class="modal-backdrop" id="receiptModal">
+    <div class="receipt-modal-card">
+      <div class="modal-header" style="margin-bottom: 10px;">
+        <h3>🧾 사르디나 회전초밥 계산서</h3>
+        <button class="close-modal-btn" id="closeReceiptBtn">&times;</button>
+      </div>
+      <div class="receipt-preview-scroll">
+        <img id="receiptRenderedImg" class="receipt-rendered-img" alt="사르디나 회전초밥 영수증" />
+      </div>
+      <div class="receipt-mobile-tip">모바일에서는 이미지를 꾹 눌러서 사진첩에 저장할 수 있어요.</div>
+      <div class="receipt-actions">
+        <button class="receipt-action-btn btn-save-img" id="downloadReceiptBtn">저장하기</button>
+        <button class="receipt-action-btn btn-share-text" id="shareReceiptBtn">공유하기</button>
+        <button class="receipt-action-btn btn-reset-shop" id="resetShopBtn" title="접시를 비우고 새로 시작">새로 식사</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const SUSHI_MENU = [
+      {
+        id: 'soy_shrimp',
+        name: '새우장초밥',
+        shortPlaqueName: '새우장',
+        plateColor: '#c94a38',
+        rimColor: '#e8b960',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#f7f5f0" />
+            <path d="M 22 47 Q 55 26 86 45 Q 95 49 98 39 Q 90 50 83 49 Q 55 38 24 54 Z" fill="#9e4722" opacity="0.94"/>
+            <path d="M 26 44 Q 55 29 83 44" stroke="#c86d3b" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <polygon points="85,44 100,34 97,48" fill="#7a2e12"/>
+            <rect x="51" y="36" width="9" height="30" fill="#1e241e"/>
+            <circle cx="55" cy="35" r="4" fill="#6ab04c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'tako_wasabi',
+        name: '타코와사비',
+        shortPlaqueName: '타코와사비',
+        plateColor: '#2d3130',
+        rimColor: '#888888',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="32" y="34" width="50" height="32" rx="6" fill="#1b221a" stroke="#111" stroke-width="1"/>
+            <circle cx="45" cy="32" r="9" fill="#b8c99d"/>
+            <circle cx="57" cy="30" r="10" fill="#c5d6ab"/>
+            <circle cx="69" cy="33" r="8" fill="#a9ba8e"/>
+            <circle cx="52" cy="34" r="3" fill="#6b8e23"/>
+            <circle cx="63" cy="31" r="2.5" fill="#8b3a3a"/>
+          </svg>
+        `
+      },
+      {
+        id: 'ikura',
+        name: '연어알군함',
+        shortPlaqueName: '연어알군함',
+        plateColor: '#d49b35',
+        rimColor: '#fff0b8',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="32" y="34" width="50" height="32" rx="6" fill="#1b221a"/>
+            <path d="M 35 34 Q 42 22 50 34 Z" fill="#589e42"/>
+            <circle cx="46" cy="33" r="5.5" fill="#ff5722"/><circle cx="45" cy="32" r="1.5" fill="#ffab91"/>
+            <circle cx="55" cy="31" r="6" fill="#ff6d00"/><circle cx="54" cy="30" r="1.5" fill="#ffd180"/>
+            <circle cx="64" cy="32" r="5.5" fill="#ff5722"/><circle cx="63" cy="31" r="1.5" fill="#ffab91"/>
+            <circle cx="72" cy="34" r="5" fill="#e64a19"/><circle cx="71" cy="33" r="1.5" fill="#ffab91"/>
+            <circle cx="51" cy="36" r="5" fill="#f4511e"/>
+            <circle cx="60" cy="36" r="5" fill="#ff6d00"/>
+          </svg>
+        `
+      },
+      {
+        id: 'scallop',
+        name: '가리비 초밥',
+        shortPlaqueName: '가리비',
+        plateColor: '#507dbc',
+        rimColor: '#dce6f2',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="32" y="44" width="50" height="21" rx="10" fill="#ffffff" />
+            <path d="M 24 48 Q 40 26 57 34 Q 74 26 90 48 Q 75 56 57 51 Q 39 56 24 48 Z" fill="#fcfaf2" stroke="#e6dec8" stroke-width="1.5"/>
+            <path d="M 38 38 Q 57 32 76 38" stroke="#d8ab70" stroke-width="2" fill="none" opacity="0.6"/>
+            <circle cx="56" cy="33" r="3.5" fill="#7cb342"/>
+          </svg>
+        `
+      },
+      {
+        id: 'scallop_adductor',
+        name: '관자 초밥',
+        shortPlaqueName: '관자',
+        plateColor: '#d4af37',
+        rimColor: '#fff5cc',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <rect x="25" y="32" width="64" height="21" rx="9" fill="#fdfbf7" stroke="#e2d9c5" stroke-width="1.5"/>
+            <line x1="45" y1="32" x2="45" y2="53" stroke="#e8e0cf" stroke-width="1.2"/>
+            <line x1="68" y1="32" x2="68" y2="53" stroke="#e8e0cf" stroke-width="1.2"/>
+            <path d="M 50 32 Q 57 22 64 32 Z" fill="#fff275"/>
+            <circle cx="57" cy="32" r="3.5" fill="#ff6b35"/>
+          </svg>
+        `
+      },
+      {
+        id: 'unagi',
+        name: '장어 초밥',
+        shortPlaqueName: '장어',
+        plateColor: '#2d3130',
+        rimColor: '#d4af37',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 48 Q 57 27 94 47 L 90 56 Q 57 38 24 55 Z" fill="#6e3518"/>
+            <path d="M 24 46 Q 57 30 90 46" stroke="#421c08" stroke-width="4" fill="none"/>
+            <rect x="52" y="35" width="10" height="31" fill="#181f18"/>
+            <circle cx="45" cy="41" r="1" fill="#f5e6c8"/>
+            <circle cx="67" cy="42" r="1" fill="#f5e6c8"/>
+            <circle cx="72" cy="44" r="1" fill="#f5e6c8"/>
+          </svg>
+        `
+      },
+      {
+        id: 'yukhoe',
+        name: '육회 초밥',
+        plateColor: '#a82020',
+        rimColor: '#f4d58d',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="32" y="34" width="50" height="32" rx="6" fill="#1b221a"/>
+            <circle cx="43" cy="32" r="7.5" fill="#b8252a"/>
+            <circle cx="52" cy="30" r="8" fill="#c92a2a"/>
+            <circle cx="62" cy="30" r="8" fill="#b8252a"/>
+            <circle cx="71" cy="32" r="7" fill="#a61e22"/>
+            <path d="M 38 33 Q 57 26 75 33" stroke="#e03131" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="57" cy="28" rx="7.5" ry="4.5" fill="#ffb703"/>
+            <ellipse cx="55" cy="27" rx="3" ry="1.5" fill="#ffe169" opacity="0.8"/>
+            <circle cx="46" cy="33" r="1" fill="#fff"/>
+            <circle cx="67" cy="32" r="1" fill="#fff"/>
+            <circle cx="49" cy="34" r="2" fill="#589e42"/>
+            <circle cx="64" cy="34" r="2" fill="#589e42"/>
+          </svg>
+        `
+      },
+      {
+        id: 'aburi_beef',
+        name: '소고기 불초밥',
+        plateColor: '#2d3130',
+        rimColor: '#e8b960',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 14 51 Q 55 24 98 49 L 92 58 Q 55 37 20 58 Z" fill="#8d493a"/>
+            <path d="M 24 46 Q 55 29 88 46" stroke="#b56555" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <line x1="36" y1="39" x2="41" y2="48" stroke="#3d1e16" stroke-width="2" stroke-linecap="round"/>
+            <line x1="50" y1="36" x2="55" y2="45" stroke="#3d1e16" stroke-width="2" stroke-linecap="round"/>
+            <line x1="65" y1="37" x2="70" y2="46" stroke="#3d1e16" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 42 36 Q 57 26 72 36" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.85"/>
+            <circle cx="57" cy="34" r="3" fill="#6ab04c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'tobiko_temaki',
+        name: '날치알 데마끼',
+        plateColor: '#2d3130',
+        rimColor: '#d4af37',
+        svg: `
+          <svg width="135" height="112" viewBox="10 2 115 112">
+            <polygon points="33,96 102,96 108,106 27,106" fill="#d8b07c" stroke="#8c6230" stroke-width="1.5"/>
+            <rect x="27" y="105" width="81" height="4" rx="1" fill="#9c6f38"/>
+            <rect x="63" y="60" width="9" height="40" rx="2" fill="url(#woodPillar)"/>
+            <polygon points="39,60 55,60 46,101" fill="#151c15" stroke="#0d120d" stroke-width="1"/>
+            <polygon points="79,60 95,60 87,101" fill="#151c15" stroke="#0d120d" stroke-width="1"/>
+            <polygon points="20,50 115,50 121,61 14,61" fill="#e6c291" stroke="#9c6f38" stroke-width="1.5"/>
+            <rect x="14" y="60" width="107" height="4.5" rx="1.5" fill="#ad7d42"/>
+            <ellipse cx="47" cy="55" rx="15" ry="3.8" fill="#2a1d10"/>
+            <ellipse cx="87" cy="55" rx="15" ry="3.8" fill="#2a1d10"/>
+            <g>
+              <polygon points="28,25 48,2 66,25" fill="#1c261b" stroke="#101710" stroke-width="1"/>
+              <ellipse cx="47" cy="26" rx="15" ry="7.5" fill="#ffffff"/>
+              <rect x="51" y="9" width="4.5" height="17" rx="1" fill="#ffd60a" transform="rotate(14 51 9)"/>
+              <rect x="55" y="11" width="4" height="16" rx="1" fill="#ffea00" transform="rotate(20 55 11)"/>
+              <circle cx="40" cy="24" r="5" fill="#ff6d00"/>
+              <circle cx="47" cy="22" r="5.5" fill="#ff8500"/>
+              <circle cx="44" cy="27" r="5" fill="#ff5400"/>
+              <circle cx="52" cy="26" r="4.5" fill="#ff6d00"/>
+              <path d="M 47 27 Q 44 15 39 13" stroke="#e8f5e9" stroke-width="1.8" fill="none"/>
+              <path d="M 49 27 Q 49 14 47 10" stroke="#e8f5e9" stroke-width="1.8" fill="none"/>
+              <ellipse cx="38" cy="13" rx="3.5" ry="2.2" fill="#4caf50" transform="rotate(-20 38 13)"/>
+              <ellipse cx="47" cy="9" rx="3.5" ry="2.2" fill="#388e3c" transform="rotate(10 47 9)"/>
+              <ellipse cx="44" cy="16" rx="3" ry="2" fill="#66bb6a"/>
+              <polygon points="28,25 66,25 58,56 36,56" fill="url(#noriCone)"/>
+            </g>
+            <g>
+              <polygon points="68,25 88,2 106,25" fill="#1c261b" stroke="#101710" stroke-width="1"/>
+              <ellipse cx="87" cy="26" rx="15" ry="7.5" fill="#ffffff"/>
+              <rect x="91" y="9" width="4.5" height="17" rx="1" fill="#ffd60a" transform="rotate(12 91 9)"/>
+              <rect x="95" y="11" width="4" height="16" rx="1" fill="#ffea00" transform="rotate(18 95 11)"/>
+              <circle cx="80" cy="24" r="5" fill="#ff6d00"/>
+              <circle cx="87" cy="22" r="5.5" fill="#ff8500"/>
+              <circle cx="84" cy="27" r="5" fill="#ff5400"/>
+              <circle cx="92" cy="26" r="4.5" fill="#ff6d00"/>
+              <path d="M 87 27 Q 84 15 79 13" stroke="#e8f5e9" stroke-width="1.8" fill="none"/>
+              <path d="M 89 27 Q 89 14 87 10" stroke="#e8f5e9" stroke-width="1.8" fill="none"/>
+              <ellipse cx="78" cy="13" rx="3.5" ry="2.2" fill="#4caf50" transform="rotate(-20 78 13)"/>
+              <ellipse cx="87" cy="9" rx="3.5" ry="2.2" fill="#388e3c" transform="rotate(10 87 9)"/>
+              <ellipse cx="84" cy="16" rx="3" ry="2" fill="#66bb6a"/>
+              <polygon points="68,25 106,25 98,56 76,56" fill="url(#noriCone)"/>
+            </g>
+            <defs>
+              <linearGradient id="woodPillar" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#a67843"/>
+                <stop offset="50%" stop-color="#cfa268"/>
+                <stop offset="100%" stop-color="#875e2f"/>
+              </linearGradient>
+              <linearGradient id="noriCone" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#141c14"/>
+                <stop offset="45%" stop-color="#243024"/>
+                <stop offset="100%" stop-color="#0f140f"/>
+              </linearGradient>
+            </defs>
+          </svg>
+        `
+      },
+      {
+        id: 'shrimp',
+        name: '새우 초밥',
+        plateColor: '#3b6e8c',
+        rimColor: '#a3c9e2',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 22 48 Q 55 27 86 46 L 82 54 Q 55 39 26 54 Z" fill="#ff7a59"/>
+            <path d="M 35 41 L 40 50 M 50 38 L 53 48 M 65 39 L 66 49" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
+            <polygon points="84,45 99,36 96,50" fill="#e0482d"/>
+          </svg>
+        `
+      },
+      {
+        id: 'anago',
+        name: '붕장어 초밥',
+        plateColor: '#2d3130',
+        rimColor: '#d4af37',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 48 Q 57 27 94 47 L 90 56 Q 57 38 24 55 Z" fill="#8b4513"/>
+            <path d="M 24 46 Q 57 30 90 46" stroke="#5c2c0c" stroke-width="4" fill="none"/>
+            <rect x="52" y="35" width="10" height="31" fill="#181f18"/>
+          </svg>
+        `
+      },
+      {
+        id: 'tamago',
+        name: '계란 초밥',
+        plateColor: '#6b9ac4',
+        rimColor: '#ffffff',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="33" y="45" width="48" height="20" rx="10" fill="#ffffff" />
+            <rect x="24" y="31" width="66" height="22" rx="6" fill="#ffd23f" stroke="#e6b417" stroke-width="1.5"/>
+            <rect x="52" y="30" width="10" height="36" fill="#1c241c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'salmon',
+        name: '연어 초밥',
+        plateColor: '#c94a38',
+        rimColor: '#f4d58d',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 18 51 Q 55 26 95 48 L 89 57 Q 55 37 23 58 Z" fill="#ff784f"/>
+            <path d="M 35 44 L 43 52 M 50 40 L 58 49 M 66 41 L 74 51" stroke="#ffb59e" stroke-width="2" stroke-linecap="round"/>
+          </svg>
+        `
+      },
+      {
+        id: 'tuna',
+        name: '참치 초밥',
+        plateColor: '#a82020',
+        rimColor: '#e8c574',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#c92a2a"/>
+            <path d="M 32 45 Q 55 33 82 45" stroke="#e03131" stroke-width="3" fill="none"/>
+          </svg>
+        `
+      },
+      {
+        id: 'tuna_akami',
+        name: '참치 붉은속살 초밥',
+        plateColor: '#a82020',
+        rimColor: '#e8c574',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#9e141a"/>
+            <path d="M 32 45 Q 55 33 82 45" stroke="#b81d24" stroke-width="3" fill="none"/>
+          </svg>
+        `
+      },
+      {
+        id: 'otoro',
+        name: '참치대뱃살 초밥',
+        plateColor: '#d4af37',
+        rimColor: '#fff6d6',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 19 50 Q 55 25 94 48 L 88 57 Q 55 38 24 57 Z" fill="#e86f7c"/>
+            <path d="M 32 45 L 42 53 M 48 40 L 58 50 M 64 40 L 74 51 M 78 44 L 84 52" stroke="#ffd6dc" stroke-width="2.2" stroke-linecap="round"/>
+          </svg>
+        `
+      },
+      {
+        id: 'mackerel',
+        name: '고등어 초밥',
+        plateColor: '#3b6e8c',
+        rimColor: '#d0e2f0',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 50 Q 55 26 93 48 L 88 56 Q 55 38 24 56 Z" fill="#c98ca7"/>
+            <path d="M 22 46 Q 55 24 91 44 L 88 50 Q 55 32 25 50 Z" fill="#4a5d73"/>
+            <path d="M 26 47 Q 55 29 88 47" stroke="#dce4ec" stroke-width="3" fill="none"/>
+            <line x1="42" y1="36" x2="46" y2="44" stroke="#ffffff" stroke-width="1.5"/>
+            <line x1="56" y1="34" x2="60" y2="42" stroke="#ffffff" stroke-width="1.5"/>
+            <line x1="70" y1="36" x2="74" y2="44" stroke="#ffffff" stroke-width="1.5"/>
+          </svg>
+        `
+      },
+      {
+        id: 'amaebi',
+        name: '단새우 초밥',
+        plateColor: '#c94a38',
+        rimColor: '#f4d58d',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 49 Q 54 27 88 45 L 85 52 Q 54 36 24 54 Z" fill="#ff8fa3"/>
+            <path d="M 24 44 Q 56 23 90 42 L 87 48 Q 56 32 28 49 Z" fill="#ff758f"/>
+            <polygon points="86,42 104,33 99,45" fill="#e63946"/>
+            <polygon points="84,47 102,42 97,51" fill="#d62828"/>
+          </svg>
+        `
+      },
+      {
+        id: 'shimaebi',
+        name: '꽃새우 초밥',
+        plateColor: '#d4af37',
+        rimColor: '#fff5cc',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 22 48 Q 55 25 87 45 L 83 54 Q 55 38 26 54 Z" fill="#ff9ebb"/>
+            <path d="M 36 40 L 42 49 M 52 36 L 56 47 M 68 38 L 70 48" stroke="#d90429" stroke-width="2" stroke-linecap="round"/>
+            <polygon points="84,44 100,35 96,49" fill="#d90429"/>
+          </svg>
+        `
+      },
+      {
+        id: 'hirame',
+        name: '광어 초밥',
+        plateColor: '#507dbc',
+        rimColor: '#ffffff',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 19 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#f7f4eb" stroke="#e2dccb" stroke-width="1.2"/>
+            <path d="M 30 46 Q 55 33 82 46" stroke="#f2d5dc" stroke-width="2.5" fill="none" opacity="0.7"/>
+          </svg>
+        `
+      },
+      {
+        id: 'engawa',
+        name: '광어지느러미 초밥',
+        plateColor: '#d4af37',
+        rimColor: '#ffffff',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 49 Q 55 26 92 47 L 87 56 Q 55 38 25 56 Z" fill="#fcfaf5" stroke="#dcd6c8" stroke-width="1.5"/>
+            <line x1="36" y1="39" x2="39" y2="49" stroke="#e0d8c8" stroke-width="1.5"/>
+            <line x1="46" y1="37" x2="49" y2="47" stroke="#e0d8c8" stroke-width="1.5"/>
+            <line x1="56" y1="36" x2="59" y2="46" stroke="#e0d8c8" stroke-width="1.5"/>
+            <line x1="66" y1="37" x2="69" y2="47" stroke="#e0d8c8" stroke-width="1.5"/>
+            <line x1="76" y1="39" x2="79" y2="49" stroke="#e0d8c8" stroke-width="1.5"/>
+            <circle cx="56" cy="35" r="3.5" fill="#6ab04c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'aji',
+        name: '전갱이 초밥',
+        plateColor: '#3b6e8c',
+        rimColor: '#a3c9e2',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 50 Q 55 26 93 48 L 88 56 Q 55 38 24 56 Z" fill="#c96f7b"/>
+            <path d="M 24 45 Q 55 26 89 45" stroke="#b8c4cc" stroke-width="5" fill="none" stroke-linecap="round"/>
+            <circle cx="56" cy="34" r="4.5" fill="#f3d58d"/>
+            <circle cx="53" cy="36" r="2.5" fill="#589e42"/>
+            <circle cx="59" cy="36" r="2.5" fill="#589e42"/>
+          </svg>
+        `
+      },
+      {
+        id: 'sanma',
+        name: '꽁치 초밥',
+        plateColor: '#6b9ac4',
+        rimColor: '#e6f0fa',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 16 49 Q 55 25 97 47 L 91 55 Q 55 37 21 55 Z" fill="#b56565"/>
+            <path d="M 19 45 Q 55 24 94 44" stroke="#5c6f84" stroke-width="4.5" fill="none"/>
+            <path d="M 21 47 Q 55 27 92 46" stroke="#d8e2eb" stroke-width="2" fill="none"/>
+            <circle cx="56" cy="34" r="4" fill="#e6c875"/>
+          </svg>
+        `
+      },
+      {
+        id: 'uni',
+        name: '성게알 초밥',
+        plateColor: '#d4af37',
+        rimColor: '#fff5cc',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="32" y="34" width="50" height="32" rx="6" fill="#1b221a"/>
+            <ellipse cx="46" cy="31" rx="10" ry="6" fill="#e69500" transform="rotate(-10 46 31)"/>
+            <ellipse cx="58" cy="29" rx="11" ry="6.5" fill="#ffa700"/>
+            <ellipse cx="69" cy="32" rx="9" ry="5.5" fill="#d98600" transform="rotate(12 69 32)"/>
+            <ellipse cx="53" cy="33" rx="9" ry="5" fill="#ffb72b"/>
+          </svg>
+        `
+      },
+      {
+        id: 'tako',
+        name: '문어 초밥',
+        plateColor: '#6b9ac4',
+        rimColor: '#ffffff',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 49 Q 55 26 92 47 L 87 56 Q 55 38 25 56 Z" fill="#fcf8f5" stroke="#8c2d38" stroke-width="2.2"/>
+            <rect x="52" y="34" width="9" height="32" fill="#1c241c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'tai',
+        name: '도미 초밥',
+        plateColor: '#c94a38',
+        rimColor: '#f4d58d',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#faf5f0" stroke="#e6d7c8" stroke-width="1"/>
+            <path d="M 24 46 Q 55 28 89 46" stroke="#e06d78" stroke-width="3.5" fill="none" opacity="0.85"/>
+          </svg>
+        `
+      },
+      {
+        id: 'madai',
+        name: '참돔 초밥',
+        plateColor: '#d4af37',
+        rimColor: '#fff5cc',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#fff8f6" stroke="#e8cfc8" stroke-width="1"/>
+            <path d="M 22 44 Q 55 26 90 44" stroke="#c94a58" stroke-width="4" fill="none"/>
+            <circle cx="56" cy="35" r="3" fill="#6ab04c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'buri',
+        name: '방어 초밥',
+        plateColor: '#a82020',
+        rimColor: '#e8c574',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 19 50 Q 55 25 94 48 L 88 57 Q 55 38 24 57 Z" fill="#f2d0cc"/>
+            <path d="M 22 45 Q 55 26 88 45" stroke="#9e2a35" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+          </svg>
+        `
+      },
+      {
+        id: 'iwashi',
+        name: '정어리 초밥',
+        plateColor: '#3b6e8c',
+        rimColor: '#a3c9e2',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 19 50 Q 55 26 93 48 L 88 56 Q 55 38 24 56 Z" fill="#b85d68"/>
+            <path d="M 22 45 Q 55 25 90 45" stroke="#7d8f9e" stroke-width="5" fill="none"/>
+            <circle cx="38" cy="40" r="1.3" fill="#2c353d"/>
+            <circle cx="48" cy="37" r="1.3" fill="#2c353d"/>
+            <circle cx="66" cy="37" r="1.3" fill="#2c353d"/>
+            <circle cx="76" cy="40" r="1.3" fill="#2c353d"/>
+            <circle cx="56" cy="34" r="4" fill="#f0d284"/>
+          </svg>
+        `
+      },
+      {
+        id: 'ika',
+        name: '오징어 초밥',
+        plateColor: '#6b9ac4',
+        rimColor: '#ffffff',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 22 48 Q 55 26 90 46 L 86 56 Q 55 38 26 56 Z" fill="#fcfcfc" stroke="#dcdcdc" stroke-width="1.5"/>
+            <line x1="38" y1="38" x2="42" y2="48" stroke="#e6e6e6" stroke-width="1.5"/>
+            <line x1="50" y1="36" x2="54" y2="46" stroke="#e6e6e6" stroke-width="1.5"/>
+            <line x1="62" y1="36" x2="66" y2="46" stroke="#e6e6e6" stroke-width="1.5"/>
+            <line x1="74" y1="38" x2="78" y2="48" stroke="#e6e6e6" stroke-width="1.5"/>
+          </svg>
+        `
+      },
+      {
+        id: 'yariika',
+        name: '한치 초밥',
+        plateColor: '#507dbc',
+        rimColor: '#dce6f2',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 49 Q 55 25 92 47 L 87 56 Q 55 38 25 56 Z" fill="#ffffff" stroke="#e0e0e0" stroke-width="1.2"/>
+            <circle cx="56" cy="35" r="3.5" fill="#6ab04c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'suzuki',
+        name: '농어 초밥',
+        plateColor: '#507dbc',
+        rimColor: '#dce6f2',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 50 Q 55 26 92 48 L 87 57 Q 55 38 25 57 Z" fill="#f7f5f0" stroke="#dfd9ce" stroke-width="1.2"/>
+            <path d="M 35 42 Q 55 34 77 42" stroke="#e8b4bc" stroke-width="2" fill="none"/>
+          </svg>
+        `
+      },
+      {
+        id: 'nishin',
+        name: '청어 초밥',
+        plateColor: '#2d3130',
+        rimColor: '#888888',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 19 50 Q 55 26 93 48 L 88 56 Q 55 38 24 56 Z" fill="#a84a54"/>
+            <path d="M 22 44 Q 55 24 90 44" stroke="#455566" stroke-width="5" fill="none"/>
+            <circle cx="56" cy="34" r="3.8" fill="#6ab04c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'akagai',
+        name: '피조개 초밥',
+        plateColor: '#c94a38',
+        rimColor: '#e8b960',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 22 48 Q 42 26 57 34 Q 72 26 90 48 Q 74 56 57 50 Q 40 56 22 48 Z" fill="#d9654c" stroke="#b04128" stroke-width="1.5"/>
+            <line x1="42" y1="36" x2="45" y2="46" stroke="#b04128" stroke-width="1.5"/>
+            <line x1="57" y1="35" x2="57" y2="47" stroke="#b04128" stroke-width="1.5"/>
+            <line x1="72" y1="36" x2="69" y2="46" stroke="#b04128" stroke-width="1.5"/>
+          </svg>
+        `
+      },
+      {
+        id: 'hamo',
+        name: '갯장어 초밥',
+        plateColor: '#c94a38',
+        rimColor: '#f4d58d',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 20 48 Q 55 26 92 47 L 88 55 Q 55 38 24 55 Z" fill="#faf7f0" stroke="#dfd8c8" stroke-width="1.5"/>
+            <line x1="36" y1="39" x2="36" y2="48" stroke="#d4ccb8" stroke-width="1.5"/>
+            <line x1="46" y1="36" x2="46" y2="46" stroke="#d4ccb8" stroke-width="1.5"/>
+            <line x1="66" y1="36" x2="66" y2="46" stroke="#d4ccb8" stroke-width="1.5"/>
+            <line x1="76" y1="39" x2="76" y2="48" stroke="#d4ccb8" stroke-width="1.5"/>
+            <circle cx="56" cy="34" r="3.8" fill="#c92a2a"/>
+          </svg>
+        `
+      },
+      {
+        id: 'sayori',
+        name: '학꽁치 초밥',
+        plateColor: '#507dbc',
+        rimColor: '#ffffff',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
+            <path d="M 14 50 Q 55 26 98 48 L 92 55 Q 55 37 20 55 Z" fill="#eef2f5" stroke="#c5d1db" stroke-width="1.2"/>
+            <path d="M 18 47 Q 55 28 94 46" stroke="#a3b8c8" stroke-width="2.5" fill="none"/>
+            <circle cx="56" cy="35" r="3.8" fill="#589e42"/>
+          </svg>
+        `
+      }
+    ];
+
+    function getPlatePrice(plateData) {
+      if (plateData.isCustom) return 3500;
+      const colorPriceMap = {
+        '#6b9ac4': 1200,
+        '#507dbc': 1500,
+        '#3b6e8c': 1800,
+        '#c94a38': 2200,
+        '#a82020': 2600,
+        '#2d3130': 3000,
+        '#d49b35': 3500,
+        '#d4af37': 3500
+      };
+      return colorPriceMap[plateData.plateColor] || 2000;
+    }
+
+    const TODAY_SPECIAL_IDS = [
+      'soy_shrimp',
+      'tako_wasabi',
+      'ikura',
+      'scallop',
+      'scallop_adductor',
+      'unagi'
+    ];
+
+    function shuffleArray(array) {
+      const arr = [...array];
+      for (let i = arr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [arr[i], arr[j]] = [arr[j], arr[i]];
+      }
+      return arr;
+    }
+
+    const specialCandidates = SUSHI_MENU.filter(item => TODAY_SPECIAL_IDS.includes(item.id));
+    const pickedFromSpecial2 = shuffleArray(specialCandidates).slice(0, 2);
+    const todaySpecialItem = pickedFromSpecial2[0];
+    const pickedSpecialId = todaySpecialItem.id;
+
+    const otherCandidates = SUSHI_MENU.filter(item => !TODAY_SPECIAL_IDS.includes(item.id));
+    const pickedFromOthers2 = shuffleArray(otherCandidates).slice(0, 2);
+    const leftFourMenus = shuffleArray([...pickedFromSpecial2, ...pickedFromOthers2]);
+
+    const menuBoard = document.getElementById('menuBoard');
+    if (menuBoard) {
+      menuBoard.innerHTML = '';
+
+      leftFourMenus.forEach(menu => {
+        const plaque = document.createElement('div');
+        plaque.className = 'menu-plaque';
+        let plaqueText = menu.name.replace(/\s+/g, '');
+        if (plaqueText.length > 6) {
+          plaqueText = plaqueText.replace(/초밥$/, '');
+        }
+        plaque.textContent = plaqueText;
+        menuBoard.appendChild(plaque);
+      });
+
+      const specialPlaque = document.createElement('div');
+      specialPlaque.className = 'menu-plaque special-plaque';
+      specialPlaque.textContent = '오늘의특선';
+      specialPlaque.title = `오늘의 특선: ${todaySpecialItem.name}`;
+      menuBoard.appendChild(specialPlaque);
+    }
+
+    function createPerspectivePlateSVG(plateColor, rimColor, width = 140, height = 38) {
+      return `
+        <svg width="${width}" height="${height}" viewBox="0 0 140 38">
+          <ellipse cx="70" cy="33" rx="48" ry="4.5" fill="rgba(0,0,0,0.42)" />
+          <path d="M 38 26 L 41 32 C 41 34.5, 99 34.5, 99 32 L 102 26 Z" fill="#222" opacity="0.7" />
+          <path d="M 38 26 L 41 31.5 C 41 34, 99 34, 99 31.5 L 102 26 Z" fill="${plateColor}" filter="brightness(0.65)" />
+          <path d="M 8 15 C 12 28, 36 30, 70 30 C 104 30, 128 28, 132 15 Z" fill="${plateColor}" filter="brightness(0.82)" />
+          <ellipse cx="70" cy="15" rx="62" ry="11.5" fill="${plateColor}" stroke="${rimColor}" stroke-width="2.2" />
+          <ellipse cx="70" cy="16" rx="45" ry="7.5" fill="${plateColor}" filter="brightness(0.92)" stroke="${rimColor}" stroke-width="0.9" opacity="0.85" />
+        </svg>
+      `;
+    }
+
+    function autoCropTransparentImage(dataUrl) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+
+          const imgData = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          const pixels = imgData.data;
+
+          let top = canvas.height, left = canvas.width, right = 0, bottom = 0;
+          let hasOpaquePixel = false;
+
+          for (let y = 0; y < canvas.height; y++) {
+            for (let x = 0; x < canvas.width; x++) {
+              const alpha = pixels[(y * canvas.width + x) * 4 + 3];
+              if (alpha > 15) {
+                hasOpaquePixel = true;
+                if (x < left) left = x;
+                if (x > right) right = x;
+                if (y < top) top = y;
+                if (y > bottom) bottom = y;
+              }
+            }
+          }
+
+          if (!hasOpaquePixel) {
+            resolve(dataUrl);
+            return;
+          }
+
+          const trimWidth = right - left + 1;
+          const trimHeight = bottom - top + 1;
+
+          const maxDim = 320;
+          let scale = 1;
+          if (trimWidth > maxDim || trimHeight > maxDim) {
+            scale = Math.min(maxDim / trimWidth, maxDim / trimHeight);
+          }
+
+          const outCanvas = document.createElement('canvas');
+          outCanvas.width = Math.max(1, Math.round(trimWidth * scale));
+          outCanvas.height = Math.max(1, Math.round(trimHeight * scale));
+
+          const outCtx = outCanvas.getContext('2d');
+          outCtx.drawImage(
+            canvas,
+            left, top, trimWidth, trimHeight,
+            0, 0, outCanvas.width, outCanvas.height
+          );
+
+          resolve(outCanvas.toDataURL('image/png'));
+        };
+        img.onerror = () => resolve(dataUrl);
+        img.src = dataUrl;
+      });
+    }
+
+    const DB_NAME = 'PeacefulSushiDB';
+    const STORE_NAME = 'customImages';
+    let dbInstance = null;
+    let customImagesList = [];
+
+    function initDatabase() {
+      return new Promise((resolve, reject) => {
+        const request = indexedDB.open(DB_NAME, 1);
+        request.onupgradeneeded = (e) => {
+          const db = e.target.result;
+          if (!db.objectStoreNames.contains(STORE_NAME)) {
+            db.createObjectStore(STORE_NAME, { keyPath: 'id', autoIncrement: true });
+          }
+        };
+        request.onsuccess = (e) => {
+          dbInstance = e.target.result;
+          loadCustomImages().then(resolve);
+        };
+        request.onerror = (e) => reject(e);
+      });
+    }
+
+    function loadCustomImages() {
+      return new Promise((resolve) => {
+        if (!dbInstance) return resolve([]);
+        const tx = dbInstance.transaction(STORE_NAME, 'readonly');
+        const store = tx.objectStore(STORE_NAME);
+        const req = store.getAll();
+        req.onsuccess = () => {
+          customImagesList = req.result || [];
+          renderSavedImagesGrid();
+          resolve(customImagesList);
+        };
+      });
+    }
+
+    function saveCustomImage(dataUrl) {
+      return new Promise((resolve) => {
+        const tx = dbInstance.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        store.add({ dataUrl });
+        tx.oncomplete = () => {
+          loadCustomImages().then(resolve);
+        };
+      });
+    }
+
+    function deleteCustomImage(id) {
+      const tx = dbInstance.transaction(STORE_NAME, 'readwrite');
+      const store = tx.objectStore(STORE_NAME);
+      store.delete(id);
+      tx.oncomplete = () => {
+        loadCustomImages();
+      };
+    }
+
+    const railBelt = document.getElementById('railBelt');
+    const platesLayer = document.getElementById('platesLayer');
+    const eatingSlot = document.getElementById('eatingSlot');
+    const eatingStatusBar = document.getElementById('eatingStatusBar');
+    const eatingStatusText = document.getElementById('eatingStatusText');
+    const progressFill = document.getElementById('progressFill');
+    const chopsticksSet = document.getElementById('chopsticksSet');
+    const plateStackWrapper = document.getElementById('plateStackWrapper');
+    const stackCountBadge = document.getElementById('stackCountBadge');
+    const toastNotice = document.getElementById('toastNotice');
+
+    let activePlatesOnRail = [];
+    let isCurrentlyEating = false;
+    let isShopClosed = false;
+    let eatenPlatesCount = 0;
+    let eatenHistoryMap = new Map(); // { key: { name, price, count } }
+    const MAX_PLATES_LIMIT = 30;
+
+    const RAIL_SPEED = 0.9;
+    const PLATE_SPACING = 190;
+    let beltOffsetX = 0;
+    let lastSpawnedKey = null;
+
+    function generatePlateData() {
+      let candidate = null;
+      let candidateKey = '';
+      let attempts = 0;
+
+      do {
+        attempts++;
+
+        if (customImagesList.length > 0 && Math.random() < 0.08) {
+          const randomCustom = customImagesList[Math.floor(Math.random() * customImagesList.length)];
+          candidate = {
+            isCustom: true,
+            name: '스페셜 초밥 ✨',
+            imageUrl: randomCustom.dataUrl,
+            plateColor: '#d4af37',
+            rimColor: '#fff5cc'
+          };
+          candidateKey = `custom_${randomCustom.id || 'special'}`;
+        } else if (todaySpecialItem && Math.random() < 0.12) {
+          candidate = {
+            isCustom: false,
+            isTodaySpecial: true,
+            ...todaySpecialItem
+          };
+          candidateKey = candidate.id;
+        } else {
+          const randomMenu = SUSHI_MENU[Math.floor(Math.random() * SUSHI_MENU.length)];
+          const isSpecialMatch = randomMenu.id === pickedSpecialId;
+          candidate = {
+            isCustom: false,
+            isTodaySpecial: isSpecialMatch,
+            ...randomMenu
+          };
+          candidateKey = candidate.id;
+        }
+
+        if (lastSpawnedKey && lastSpawnedKey.startsWith('custom_') && candidateKey.startsWith('custom_')) {
+          continue;
+        }
+
+      } while (candidateKey === lastSpawnedKey && attempts < 10);
+
+      lastSpawnedKey = candidateKey;
+      return candidate;
+    }
+
+    function buildPlateElement(plateData) {
+      const wrapper = document.createElement('div');
+      wrapper.className = 'sushi-item';
+      if (isCurrentlyEating || isShopClosed) wrapper.classList.add('disabled-pick');
+
+      const label = document.createElement('div');
+      label.className = 'sushi-label';
+      if (plateData.isTodaySpecial) {
+        label.classList.add('today-special-label');
+        label.textContent = `[오늘의 특선] ${plateData.name}`;
+      } else {
+        label.textContent = plateData.name;
+      }
+      wrapper.appendChild(label);
+
+      const foodWrap = document.createElement('div');
+      foodWrap.className = 'food-visual-wrap';
+
+      if (plateData.isCustom) {
+        const img = document.createElement('img');
+        img.className = 'custom-sushi-img';
+        img.src = plateData.imageUrl;
+        foodWrap.appendChild(img);
+      } else {
+        foodWrap.innerHTML = plateData.svg;
+      }
+      wrapper.appendChild(foodWrap);
+
+      const plateBase = document.createElement('div');
+      plateBase.className = 'plate-base-wrap';
+      plateBase.innerHTML = createPerspectivePlateSVG(plateData.plateColor, plateData.rimColor);
+      wrapper.appendChild(plateBase);
+
+      return wrapper;
+    }
+
+    function spawnPlateAt(xPos) {
+      const data = generatePlateData();
+      const el = buildPlateElement(data);
+      el.style.left = `${xPos}px`;
+      platesLayer.appendChild(el);
+
+      const plateObj = { el, data, x: xPos };
+      el.addEventListener('click', () => handlePickPlate(plateObj));
+      activePlatesOnRail.push(plateObj);
+    }
+
+    function initRail() {
+      const screenWidth = window.innerWidth;
+      const count = Math.ceil(screenWidth / PLATE_SPACING) + 2;
+      for (let i = -1; i < count; i++) {
+        spawnPlateAt(i * PLATE_SPACING);
+      }
+    }
+
+    function animateRail() {
+      const screenWidth = window.innerWidth;
+
+      beltOffsetX = (beltOffsetX + RAIL_SPEED) % 42;
+      railBelt.style.backgroundPositionX = `${beltOffsetX}px`;
+
+      for (let i = activePlatesOnRail.length - 1; i >= 0; i--) {
+        const item = activePlatesOnRail[i];
+        item.x += RAIL_SPEED;
+        item.el.style.left = `${item.x}px`;
+
+        if (item.x > screenWidth + 120) {
+          item.el.remove();
+          activePlatesOnRail.splice(i, 1);
+        }
+      }
+
+      if (activePlatesOnRail.length === 0) {
+        spawnPlateAt(-PLATE_SPACING);
+      } else {
+        const leftmostX = Math.min(...activePlatesOnRail.map(p => p.x));
+        if (leftmostX > -PLATE_SPACING) {
+          spawnPlateAt(leftmostX - PLATE_SPACING);
+        }
+      }
+
+      requestAnimationFrame(animateRail);
+    }
+
+    let toastTimer = null;
+    function showToast(msg, duration = 2400) {
+      toastNotice.textContent = msg;
+      toastNotice.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => {
+        toastNotice.classList.remove('show');
+      }, duration);
+    }
+
+    function handlePickPlate(plateObj) {
+      if (isShopClosed) {
+        showToast('오늘의 영업이 종료되었습니다! 영수증을 확인해 주세요. 🧾');
+        openReceiptModal(true);
+        return;
+      }
+
+      if (isCurrentlyEating) {
+        showToast('아직 식사 중이에요! 다 먹고 난 뒤에 새 접시를 집을 수 있습니다.');
+        return;
+      }
+
+      isCurrentlyEating = true;
+      updateRailCursorState();
+
+      const idx = activePlatesOnRail.indexOf(plateObj);
+      if (idx > -1) activePlatesOnRail.splice(idx, 1);
+      plateObj.el.remove();
+
+      const displayClone = buildPlateElement(plateObj.data);
+      displayClone.className = 'active-sushi-display';
+      eatingSlot.appendChild(displayClone);
+
+      const minTime = 3000;
+      const maxTime = 5000;
+      const eatDurationMs = Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
+      startEatingProcess(plateObj.data, displayClone, eatDurationMs);
+    }
+
+    function startEatingProcess(plateData, displayElement, durationMs) {
+      eatingStatusBar.style.display = 'flex';
+      chopsticksSet.classList.add('eating-motion');
+      progressFill.style.width = '100%';
+      eatingStatusText.textContent = `${plateData.name} 음미하는 중...`;
+
+      const startTime = performance.now();
+
+      function updateProgress(now) {
+        const elapsed = now - startTime;
+        const remainingRatio = Math.max(0, 1 - elapsed / durationMs);
+
+        progressFill.style.width = `${remainingRatio * 100}%`;
+
+        if (elapsed < durationMs) {
+          requestAnimationFrame(updateProgress);
+        } else {
+          finishEating(plateData, displayElement);
+        }
+      }
+
+      requestAnimationFrame(updateProgress);
+    }
+
+    function finishEating(plateData, displayElement) {
+      displayElement.remove();
+      eatingStatusBar.style.display = 'none';
+      chopsticksSet.classList.remove('eating-motion');
+
+      addPlateToStack(plateData);
+
+      isCurrentlyEating = false;
+      updateRailCursorState();
+    }
+
+    function updateRailCursorState() {
+      activePlatesOnRail.forEach(p => {
+        if (isCurrentlyEating || isShopClosed) p.el.classList.add('disabled-pick');
+        else p.el.classList.remove('disabled-pick');
+      });
+    }
+
+    function recordEatenMenu(plateData) {
+      const price = getPlatePrice(plateData);
+      const itemName = plateData.isCustom ? '스페셜 초밥' : plateData.name;
+      const key = `${itemName}_${price}`;
+
+      if (eatenHistoryMap.has(key)) {
+        eatenHistoryMap.get(key).count += 1;
+      } else {
+        eatenHistoryMap.set(key, {
+          name: itemName,
+          price: price,
+          count: 1
+        });
+      }
+    }
+
+    function addPlateToStack(plateData) {
+      eatenPlatesCount++;
+      recordEatenMenu(plateData);
+      stackCountBadge.textContent = `먹은 접시: ${eatenPlatesCount}접시`;
+
+      const visualIndex = Math.min(plateStackWrapper.children.length, MAX_PLATES_LIMIT - 1);
+      const plateWrap = document.createElement('div');
+      plateWrap.className = 'stacked-plate-svg';
+      plateWrap.style.bottom = `${visualIndex * 8.5}px`;
+      plateWrap.style.zIndex = eatenPlatesCount;
+      plateWrap.innerHTML = createPerspectivePlateSVG(plateData.plateColor, plateData.rimColor, 145, 36);
+
+      plateStackWrapper.appendChild(plateWrap);
+
+      if (eatenPlatesCount >= MAX_PLATES_LIMIT) {
+        isShopClosed = true;
+        updateRailCursorState();
+        showToast('오늘의 영업이 종료되었습니다! 자동 결제로 넘어갑니다.', 4000);
+        setTimeout(() => {
+          openReceiptModal(true);
+        }, 1100);
+      }
+    }
+
+    /**
+     * 6. 사르디나 회전초밥 영수증 이미지 생성기 (HTML5 Canvas)
+     * - 회전초밥집 갈색 여백 포함
+     * - 살짝 기울어진 영수증 + 위아래 ^^^^^ 지그재그 절취선 + 약간의 구깃함(주름 그라데이션)
+     * - 상호명: 사르디나 회전초밥, 현재 결제일시, 메뉴별 수량/금액, 바코드, 도메인 표시
+     */
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    const receiptModal = document.getElementById('receiptModal');
+    const closeReceiptBtn = document.getElementById('closeReceiptBtn');
+    const receiptRenderedImg = document.getElementById('receiptRenderedImg');
+    const downloadReceiptBtn = document.getElementById('downloadReceiptBtn');
+    const shareReceiptBtn = document.getElementById('shareReceiptBtn');
+    const resetShopBtn = document.getElementById('resetShopBtn');
+
+    function formatCurrentDateTime() {
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      const ss = String(now.getSeconds()).padStart(2, '0');
+      return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
+    }
+
+    function formatCurrency(num) {
+      return num.toLocaleString('ko-KR') + '원';
+    }
+
+    function generateReceiptCanvasDataURL(isAutoClosed = false) {
+      const items = Array.from(eatenHistoryMap.values());
+      const rowHeight = 28;
+      const itemsBlockHeight = Math.max(1, items.length) * rowHeight;
+      const closedBannerHeight = isAutoClosed ? 44 : 0;
+
+      const paperWidth = 380;
+      const paperHeight = 430 + itemsBlockHeight + closedBannerHeight;
+      const marginX = 75;
+      const marginY = 75;
+
+      const canvasWidth = paperWidth + marginX * 2;
+      const canvasHeight = paperHeight + marginY * 2;
+
+      const canvas = document.createElement('canvas');
+      const scale = 2; 
+      canvas.width = canvasWidth * scale;
+      canvas.height = canvasHeight * scale;
+
+      const ctx = canvas.getContext('2d');
+      ctx.scale(scale, scale);
+
+      const bgGrad = ctx.createRadialGradient(
+        canvasWidth / 2, canvasHeight / 2, 40,
+        canvasWidth / 2, canvasHeight / 2, Math.max(canvasWidth, canvasHeight) * 0.75
+      );
+      bgGrad.addColorStop(0, '#4e382e');
+      bgGrad.addColorStop(0.55, '#33241d');
+      bgGrad.addColorStop(1, '#221712');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, canvasWidth, canvasHeight);
+
+      ctx.strokeStyle = 'rgba(214, 159, 99, 0.22)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(18, 18, canvasWidth - 36, canvasHeight - 36);
+
+      ctx.save();
+      ctx.translate(canvasWidth / 2, canvasHeight / 2);
+      ctx.rotate(-1.8 * Math.PI / 180);
+      const halfW = paperWidth / 2;
+      const halfH = paperHeight / 2;
+      const zigW = 10;
+      const zigH = 7;
+
+      function traceReceiptPath() {
+        ctx.beginPath();
+        ctx.moveTo(-halfW, -halfH + zigH);
+        for (let x = -halfW; x < halfW; x += zigW) {
+          const midX = Math.min(x + zigW / 2, halfW);
+          const nextX = Math.min(x + zigW, halfW);
+          ctx.lineTo(midX, -halfH);
+          ctx.lineTo(nextX, -halfH + zigH);
+        }
+        ctx.lineTo(halfW, halfH - zigH);
+        for (let x = halfW; x > -halfW; x -= zigW) {
+          const midX = Math.max(x - zigW / 2, -halfW);
+          const nextX = Math.max(x - zigW, -halfW);
+          ctx.lineTo(midX, halfH);
+          ctx.lineTo(nextX, halfH - zigH);
+        }
+        ctx.closePath();
+      }
+
+      ctx.save();
+      ctx.shadowColor = 'rgba(0, 0, 0, 0.55)';
+      ctx.shadowBlur = 26;
+      ctx.shadowOffsetX = 6;
+      ctx.shadowOffsetY = 14;
+      traceReceiptPath();
+      ctx.fillStyle = '#faf8f5';
+      ctx.fill();
+      ctx.restore();
+
+      ctx.save();
+      traceReceiptPath();
+      ctx.clip();
+
+      const paperGrad = ctx.createLinearGradient(-halfW, -halfH, halfW, halfH);
+      paperGrad.addColorStop(0, '#fcfbf9');
+      paperGrad.addColorStop(0.5, '#f4f1ea');
+      paperGrad.addColorStop(1, '#ebe6dc');
+      ctx.fillStyle = paperGrad;
+      ctx.fillRect(-halfW, -halfH, paperWidth, paperHeight);
+
+      const foldGrad = ctx.createLinearGradient(0, -halfH, 0, halfH);
+      foldGrad.addColorStop(0, 'rgba(0, 0, 0, 0.02)');
+      foldGrad.addColorStop(0.28, 'rgba(255, 255, 255, 0.35)');
+      foldGrad.addColorStop(0.30, 'rgba(90, 75, 60, 0.045)');
+      foldGrad.addColorStop(0.65, 'rgba(255, 255, 255, 0.25)');
+      foldGrad.addColorStop(0.68, 'rgba(90, 75, 60, 0.04)');
+      foldGrad.addColorStop(1, 'rgba(0, 0, 0, 0.03)');
+      ctx.fillStyle = foldGrad;
+      ctx.fillRect(-halfW, -halfH, paperWidth, paperHeight);
+
+      ctx.strokeStyle = 'rgba(120, 105, 90, 0.08)';
+      ctx.lineWidth = 1.2;
+      ctx.beginPath();
+      ctx.moveTo(-halfW + 20, -halfH + 80);
+      ctx.lineTo(halfW - 40, -halfH + 135);
+      ctx.moveTo(-halfW + 45, halfH - 160);
+      ctx.lineTo(halfW - 15, halfH - 115);
+      ctx.stroke();
+
+      let curY = -halfH + 46;
+      const leftX = -halfW + 28;
+      const rightX = halfW - 28;
+
+      ctx.fillStyle = '#1e1b18';
+      ctx.textAlign = 'center';
+      ctx.font = '900 22px "Pretendard", "Malgun Gothic", sans-serif';
+      ctx.fillText('사르디나 회전초밥', 0, curY);
+
+      curY += 20;
+      ctx.fillStyle = '#665e57';
+      ctx.font = '600 11.5px "Courier New", monospace';
+      ctx.fillText('SARDINA KAITEN-ZUSHI RECEIPT', 0, curY);
+
+      curY += 24;
+      ctx.fillStyle = '#4a433d';
+      ctx.font = '500 12px "Pretendard", monospace';
+      ctx.textAlign = 'left';
+      ctx.fillText(`결제일시: ${formatCurrentDateTime()}`, leftX, curY);
+      ctx.textAlign = 'right';
+      ctx.fillText('POS #01', rightX, curY);
+
+      function drawDottedDivider(yPos) {
+        ctx.save();
+        ctx.strokeStyle = '#7a7067';
+        ctx.lineWidth = 1.3;
+        ctx.setLineDash([3, 3]);
+        ctx.beginPath();
+        ctx.moveTo(leftX, yPos);
+        ctx.lineTo(rightX, yPos);
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      curY += 14;
+      drawDottedDivider(curY);
+
+      curY += 20;
+      ctx.fillStyle = '#2b2623';
+      ctx.font = '700 12.5px "Pretendard", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('메뉴명 (ITEM)', leftX, curY);
+      ctx.textAlign = 'center';
+      ctx.fillText('수량', 48, curY);
+      ctx.textAlign = 'right';
+      ctx.fillText('금액 (PRICE)', rightX, curY);
+
+      curY += 10;
+      drawDottedDivider(curY);
+
+      curY += 24;
+      let totalAmount = 0;
+      ctx.font = '500 13px "Pretendard", sans-serif';
+
+      items.forEach(item => {
+        const lineTotal = item.price * item.count;
+        totalAmount += lineTotal;
+
+        ctx.fillStyle = '#221e1b';
+        ctx.textAlign = 'left';
+        ctx.fillText(item.name, leftX, curY);
+
+        ctx.textAlign = 'center';
+        ctx.fillText(`${item.count}`, 48, curY);
+
+        ctx.textAlign = 'right';
+        ctx.fillText(formatCurrency(lineTotal), rightX, curY);
+
+        curY += rowHeight;
+      });
+
+      curY -= 8;
+      drawDottedDivider(curY);
+
+      const vatAmount = Math.round(totalAmount / 11);
+      const supplyAmount = totalAmount - vatAmount;
+
+      curY += 22;
+      ctx.font = '600 12.5px "Pretendard", sans-serif';
+      ctx.fillStyle = '#554d46';
+      ctx.textAlign = 'left';
+      ctx.fillText('총 먹은 접시 (TOTAL QTY)', leftX, curY);
+      ctx.textAlign = 'right';
+      ctx.fillText(`${eatenPlatesCount}접시`, rightX, curY);
+
+      curY += 20;
+      ctx.textAlign = 'left';
+      ctx.fillText('공급가액 (SUBTOTAL)', leftX, curY);
+      ctx.textAlign = 'right';
+      ctx.fillText(formatCurrency(supplyAmount), rightX, curY);
+
+      curY += 20;
+      ctx.textAlign = 'left';
+      ctx.fillText('부가세 (VAT 10%)', leftX, curY);
+      ctx.textAlign = 'right';
+      ctx.fillText(formatCurrency(vatAmount), rightX, curY);
+
+      curY += 26;
+      ctx.fillStyle = '#14110f';
+      ctx.font = '900 17px "Pretendard", sans-serif';
+      ctx.textAlign = 'left';
+      ctx.fillText('결제금액 (TOTAL)', leftX, curY);
+      ctx.textAlign = 'right';
+      ctx.fillText(formatCurrency(totalAmount), rightX, curY);
+
+      curY += 14;
+      drawDottedDivider(curY);
+
+      if (isAutoClosed) {
+        curY += 28;
+        ctx.save();
+        ctx.strokeStyle = '#b8252a';
+        ctx.lineWidth = 1.8;
+        ctx.strokeRect(leftX + 10, curY - 18, paperWidth - 76, 26);
+        ctx.fillStyle = '#b8252a';
+        ctx.font = '800 12.5px "Pretendard", sans-serif';
+        ctx.textAlign = 'center';
+        ctx.fillText('★ 30접시 달성! 오늘의 영업이 종료되었습니다 ★', 0, curY);
+        ctx.restore();
+        curY += 16;
+      }
+
+      curY += 26;
+      ctx.fillStyle = '#3b3530';
+      ctx.font = '700 12px "Pretendard", sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('THANK YOU FOR DINING WITH US!', 0, curY);
+
+      curY += 17;
+      ctx.fillStyle = '#756a60';
+      ctx.font = '600 11.5px "Courier New", monospace';
+      ctx.fillText('plate.sardina.love', 0, curY);
+
+      curY += 18;
+      const barcodeHeight = 52;
+      ctx.fillStyle = '#181512';
+
+      const barPattern = [
+        3, 1, 2, 1, 4, 1, 1, 2, 3, 1, 2, 1, 1, 3, 2, 1,
+        2, 1, 4, 1, 2, 1, 3, 1, 1, 2, 1, 3, 1, 2, 2, 1,
+        3, 1, 1, 2, 4, 1, 2, 1, 3
+      ];
+      const unitWidth = 3.1; 
+      const totalBarWidth = barPattern.reduce((sum, val) => sum + val * unitWidth, 0);
+      let bx = -totalBarWidth / 2;
+
+      for (let i = 0; i < barPattern.length; i++) {
+        const w = barPattern[i] * unitWidth;
+        if (i % 2 === 0) {
+          ctx.fillRect(bx, curY, w, barcodeHeight);
+        }
+        bx += w;
+      }
+
+      curY += barcodeHeight + 15;
+      ctx.fillStyle = '#554d46';
+      ctx.font = '600 11px "Courier New", monospace';
+      ctx.fillText(`* SRDN-${String(eatenPlatesCount).padStart(2, '0')}-${String(totalAmount).padStart(6, '0')} *`, 0, curY);
+
+      ctx.restore(); 
+      ctx.restore(); 
+
+      return canvas.toDataURL('image/png');
+    }
+
+    function openReceiptModal(isAutoClosed = false) {
+      if (eatenPlatesCount === 0) {
+        showToast('아직 접시가 없어요! 초밥을 1접시 이상 드셔보세요.');
+        return;
+      }
+
+      const dataUrl = generateReceiptCanvasDataURL(isAutoClosed);
+      receiptRenderedImg.src = dataUrl;
+      receiptModal.classList.add('open');
+    }
+
+    checkoutBtn.addEventListener('click', () => {
+      openReceiptModal(isShopClosed);
+    });
+
+    closeReceiptBtn.addEventListener('click', () => {
+      receiptModal.classList.remove('open');
+    });
+
+    receiptModal.addEventListener('click', (e) => {
+      if (e.target === receiptModal) receiptModal.classList.remove('open');
+    });
+
+    downloadReceiptBtn.addEventListener('click', () => {
+      if (!receiptRenderedImg.src) return;
+      const link = document.createElement('a');
+      link.download = `사르디나_회전초밥_영수증_${eatenPlatesCount}접시.png`;
+      link.href = receiptRenderedImg.src;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      showToast('영수증 이미지가 저장되었습니다!');
+    });
+
+    shareReceiptBtn.addEventListener('click', async () => {
+      const shareText = `사르디나 회전초밥집에서 ${eatenPlatesCount}접시를 먹었습니다!\nhttps://plate.sardina.love`;
+
+      if (navigator.share) {
+        try {
+          await navigator.share({
+            title: '사르디나 회전초밥',
+            text: shareText
+          });
+          return;
+        } catch (err) {
+          if (err.name === 'AbortError') return;
+        }
+      }
+
+      try {
+        await navigator.clipboard.writeText(shareText);
+        showToast('공유 문구와 주소가 클립보드에 복사되었습니다!');
+      } catch (e) {
+        const tempArea = document.createElement('textarea');
+        tempArea.value = shareText;
+        document.body.appendChild(tempArea);
+        tempArea.select();
+        document.execCommand('copy');
+        tempArea.remove();
+        showToast('공유 문구와 주소가 복사되었습니다!');
+      }
+    });
+
+    resetShopBtn.addEventListener('click', () => {
+      eatenPlatesCount = 0;
+      eatenHistoryMap.clear();
+      isShopClosed = false;
+      plateStackWrapper.innerHTML = '';
+      stackCountBadge.textContent = '먹은 접시: 0접시';
+      updateRailCursorState();
+      receiptModal.classList.remove('open');
+      showToast('테이블을 깔끔하게 정리했습니다! 새로운 식사를 시작해 보세요.');
+    });
+
+    const openModalBtn = document.getElementById('openModalBtn');
+    const closeModalBtn = document.getElementById('closeModalBtn');
+    const imageModal = document.getElementById('imageModal');
+    const imageFileInput = document.getElementById('imageFileInput');
+    const savedImagesGrid = document.getElementById('savedImagesGrid');
+
+    openModalBtn.addEventListener('click', () => imageModal.classList.add('open'));
+    closeModalBtn.addEventListener('click', () => imageModal.classList.remove('open'));
+    imageModal.addEventListener('click', (e) => {
+      if (e.target === imageModal) imageModal.classList.remove('open');
+    });
+
+    imageFileInput.addEventListener('change', (e) => {
+      const files = Array.from(e.target.files);
+      files.forEach(file => {
+        const reader = new FileReader();
+        reader.onload = async (event) => {
+          const trimmedDataUrl = await autoCropTransparentImage(event.target.result);
+          await saveCustomImage(trimmedDataUrl);
+        };
+        reader.readAsDataURL(file);
+      });
+      imageFileInput.value = '';
+    });
+
+    function renderSavedImagesGrid() {
+      savedImagesGrid.innerHTML = '';
+      customImagesList.forEach(item => {
+        const thumb = document.createElement('div');
+        thumb.className = 'saved-thumb';
+
+        const img = document.createElement('img');
+        img.src = item.dataUrl;
+
+        const delBtn = document.createElement('button');
+        delBtn.className = 'delete-thumb-btn';
+        delBtn.innerHTML = '&times;';
+        delBtn.title = '삭제';
+        delBtn.addEventListener('click', () => deleteCustomImage(item.id));
+
+        thumb.appendChild(img);
+        thumb.appendChild(delBtn);
+        savedImagesGrid.appendChild(thumb);
+      });
+    }
+
+    initDatabase().then(() => {
+      initRail();
+      requestAnimationFrame(animateRail);
+    });
+  </script>
+</body>
+</html>
