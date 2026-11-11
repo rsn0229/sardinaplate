@@ -1707,12 +1707,13 @@
 
     const specialCandidates = SUSHI_MENU.filter(item => TODAY_SPECIAL_IDS.includes(item.id));
     const pickedFromSpecial2 = shuffleArray(specialCandidates).slice(0, 2);
-    const todaySpecialItem = pickedFromSpecial2[0];
-    const pickedSpecialId = todaySpecialItem.id;
 
     const otherCandidates = SUSHI_MENU.filter(item => !TODAY_SPECIAL_IDS.includes(item.id));
     const pickedFromOthers2 = shuffleArray(otherCandidates).slice(0, 2);
+
     const leftFourMenus = shuffleArray([...pickedFromSpecial2, ...pickedFromOthers2]);
+    
+    const pickedSpecialIds = new Set(leftFourMenus.map(item => item.id));
 
     const menuBoard = document.getElementById('menuBoard');
     if (menuBoard) {
@@ -1732,7 +1733,7 @@
       const specialPlaque = document.createElement('div');
       specialPlaque.className = 'menu-plaque special-plaque';
       specialPlaque.textContent = '오늘의특선';
-      specialPlaque.title = `오늘의 특선: ${todaySpecialItem.name}`;
+      specialPlaque.title = `오늘의 특선: ${leftFourMenus.map(m => m.name).join(', ')}`;
       menuBoard.appendChild(specialPlaque);
     }
 
@@ -1978,13 +1979,19 @@
           weight += 120;
         }
 
+// [pickWeightedMenu 함수 내부 수정]
         const excess = stat.spawnCount - minSpawnCount;
         if (excess > 0) {
-          weight /= (1 + excess * 0.65);
+          if (pickedSpecialIds.has(item.id)) {
+            const specialExcess = Math.max(0, excess - 1);
+            weight /= (1 + specialExcess * 0.35);
+          } else {
+            weight /= (1 + excess * 0.65);
+          }
         }
 
-        if (item.id === pickedSpecialId) {
-          weight *= 1.15;
+        if (pickedSpecialIds.has(item.id)) {
+          weight *= 1.6;
         }
 
         if (onRailIds.has(item.id)) {
@@ -2053,7 +2060,7 @@
         };
         candidateKey = `custom_${pickedCustom.id || 'special'}`;
       } else {
-        const isSpecialMatch = chosen.id === pickedSpecialId;
+        const isSpecialMatch = pickedSpecialIds.has(chosen.id);
         candidate = {
           isCustom: false,
           isTodaySpecial: isSpecialMatch,
