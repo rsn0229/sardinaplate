@@ -2102,8 +2102,8 @@
       displayClone.className = 'active-sushi-display';
       eatingSlot.appendChild(displayClone);
 
-      const minTime = 3000;
-      const maxTime = 5000;
+      const minTime = 5000;
+      const maxTime = 7000;
       const eatDurationMs = Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
       startEatingProcess(plateObj.data, displayClone, eatDurationMs);
     }
