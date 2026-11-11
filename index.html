@@ -1708,11 +1708,12 @@
     const specialCandidates = SUSHI_MENU.filter(item => TODAY_SPECIAL_IDS.includes(item.id));
     const pickedFromSpecial2 = shuffleArray(specialCandidates).slice(0, 2);
 
-    const otherCandidates = SUSHI_MENU.filter(item => !TODAY_SPECIAL_IDS.includes(item.id));
+    const otherCandidates = SUSHI_MENU.filter(
+      item => !TODAY_SPECIAL_IDS.includes(item.id) && getPlatePrice(item) >= 4500
+    );
     const pickedFromOthers2 = shuffleArray(otherCandidates).slice(0, 2);
 
     const leftFourMenus = shuffleArray([...pickedFromSpecial2, ...pickedFromOthers2]);
-    
     const pickedSpecialIds = new Set(leftFourMenus.map(item => item.id));
 
     const menuBoard = document.getElementById('menuBoard');
