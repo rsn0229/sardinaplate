@@ -1066,8 +1066,8 @@
       </div>
       <div class="receipt-mobile-tip">모바일에서는 이미지를 꾹 눌러서 사진첩에 저장할 수 있어요.</div>
       <div class="receipt-actions">
-        <button class="receipt-action-btn btn-save-img" id="downloadReceiptBtn">저장하기</button>
-        <button class="receipt-action-btn btn-share-text" id="shareReceiptBtn">공유하기</button>
+        <button class="receipt-action-btn btn-save-img" id="downloadReceiptBtn">저장</button>
+        <button class="receipt-action-btn btn-share-text" id="shareReceiptBtn">공유</button>
         <button class="receipt-action-btn btn-reset-shop" id="resetShopBtn" title="접시를 비우고 새로 시작">새로 식사</button>
       </div>
     </div>
@@ -2471,33 +2471,11 @@
       showToast('영수증 이미지가 저장되었습니다!');
     });
 
-    shareReceiptBtn.addEventListener('click', async () => {
-      const shareText = `사르디나 회전초밥집에서 ${eatenPlatesCount}접시를 먹었습니다!\nhttps://plate.sardina.love`;
-
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: '사르디나 회전초밥',
-            text: shareText
-          });
-          return;
-        } catch (err) {
-          if (err.name === 'AbortError') return;
-        }
-      }
-
-      try {
-        await navigator.clipboard.writeText(shareText);
-        showToast('공유 문구와 주소가 클립보드에 복사되었습니다!');
-      } catch (e) {
-        const tempArea = document.createElement('textarea');
-        tempArea.value = shareText;
-        document.body.appendChild(tempArea);
-        tempArea.select();
-        document.execCommand('copy');
-        tempArea.remove();
-        showToast('공유 문구와 주소가 복사되었습니다!');
-      }
+    shareReceiptBtn.addEventListener('click', () => {
+      const shareText = `사르디나 회전초밥집에서 ${eatenPlatesCount}접시를 먹었습니다!`;
+      const shareUrl = 'https://plate.sardina.love';
+      const twitterIntentUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(shareText)}&url=${encodeURIComponent(shareUrl)}`;
+      window.open(twitterIntentUrl, '_blank', 'width=550,height=420,noopener,noreferrer');
     });
 
     resetShopBtn.addEventListener('click', () => {
