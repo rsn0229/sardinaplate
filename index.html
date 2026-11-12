@@ -280,14 +280,41 @@
       overflow: visible;
     }
 
-    .stacked-plate-svg {
+.stacked-plate-svg {
       position: absolute;
       left: 50%;
       transform: translateX(-50%);
       width: 145px;
       height: 36px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       filter: drop-shadow(0 4px 5px rgba(0,0,0,0.38));
-      animation: dropPlate 0.32s cubic-bezier(0.18, 0.89, 0.32, 1.25) forwards;
+      transition: bottom 0.25s ease-out;
+      animation: dropPlate 0.32s cubic-bezier(0.18, 0.89, 0.32, 1.25);
+    }
+
+.stacked-plate-svg svg,
+    .stacked-bowl-svg svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .bowl-layer-part {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+    }
+
+    .stacked-bowl-svg {
+      position: absolute;
+      left: 50%;
+      width: 136px;
+      height: 70px;
+      margin-left: -68px;
+      transition: bottom 0.25s ease-out;
     }
 
     @keyframes dropPlate {
@@ -892,7 +919,9 @@
         height: auto;
         z-index: 10;
       }
+
       .stacked-plate-svg { width: 120px; height: 32px; }
+.stacked-bowl-svg { width: 116px; height: 60px; margin-left: -58px; }
       .plate-stack-wrapper { width: 120px; height: 200px; }
 
       .right-side-zone {
@@ -938,7 +967,9 @@
         left: 12px;
         bottom: 185px;
       }
+
       .stacked-plate-svg { width: 105px; height: 28px; }
+.stacked-bowl-svg { width: 102px; height: 54px; margin-left: -51px; }
       .plate-stack-wrapper { width: 105px; height: 190px; }
       .stack-count-badge { font-size: 11.5px; padding: 4px 11px; }
 
@@ -994,10 +1025,10 @@
     .order-kiosk-grid {
       flex: 1;
       overflow-y: auto;
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      padding: 6px 4px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      padding: 6px 6px 10px 4px;
       margin-bottom: 14px;
       scrollbar-width: thin;
       scrollbar-color: rgba(214, 159, 99, 0.28) transparent;
@@ -1012,30 +1043,68 @@
       border-radius: 10px;
     }
 
+    .kiosk-price-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .kiosk-group-header {
+      display: flex;
+      align-items: center;
+    }
+
+    .kiosk-price-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 4px 12px 4px 8px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 800;
+      letter-spacing: 0.3px;
+      box-shadow: 0 3px 7px rgba(0, 0, 0, 0.4);
+    }
+
+    .kiosk-plate-dot {
+      width: 13px;
+      height: 13px;
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
+    }
+
+    .kiosk-group-items {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
     .kiosk-menu-item {
       position: relative;
-      background: #1e1613;
-      border: 2px solid #3d2f28;
+      background: linear-gradient(180deg, #785943 0%, #614634 100%);
+      border: 2px solid #8f6b52;
       border-radius: 12px;
-      padding: 14px 8px 10px 8px;
+      padding: 14px 8px 11px 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
       cursor: pointer;
+      box-shadow: inset 0 1px 0 rgba(255, 240, 220, 0.18), 0 4px 10px rgba(0, 0, 0, 0.35);
       transition: all 0.18s ease;
     }
 
     .kiosk-menu-item:hover {
-      border-color: #8c6a56;
-      background: #261c18;
+      border-color: #c49a76;
+      background: linear-gradient(180deg, #8a674f 0%, #70523e 100%);
       transform: translateY(-2px);
     }
 
     .kiosk-menu-item.selected {
       border-color: #ffd56b;
-      background: #36261d;
-      box-shadow: 0 0 14px rgba(255, 213, 107, 0.28);
+      background: linear-gradient(180deg, #946d4e 0%, #78563c 100%);
+      box-shadow: 0 0 15px rgba(255, 213, 107, 0.38);
     }
 
     .kiosk-special-badge {
@@ -1056,7 +1125,7 @@
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 6px;
+      margin-bottom: 5px;
       pointer-events: none;
     }
 
@@ -1065,29 +1134,23 @@
       max-height: 58px;
       width: auto;
       height: auto;
-      filter: drop-shadow(0 3px 4px rgba(0,0,0,0.45));
+      filter: drop-shadow(0 0 2px rgba(255, 245, 230, 0.28)) drop-shadow(0 4px 5px rgba(0,0,0,0.45));
     }
 
     .kiosk-visual-box img {
       max-width: 78px;
       max-height: 56px;
       object-fit: contain;
-      filter: drop-shadow(0 3px 4px rgba(0,0,0,0.45));
+      filter: drop-shadow(0 0 2px rgba(255, 245, 230, 0.28)) drop-shadow(0 4px 5px rgba(0,0,0,0.45));
     }
 
     .kiosk-menu-name {
       font-size: 12.5px;
       font-weight: 700;
-      color: #f5ebe6;
+      color: #fffaf5;
       text-align: center;
       word-break: keep-all;
-      margin-bottom: 3px;
-    }
-
-    .kiosk-menu-price {
-      font-size: 11.5px;
-      font-weight: 600;
-      color: #d4ab75;
+      text-shadow: 0 1px 3px rgba(0, 0, 0, 0.55);
     }
 
     .order-submit-btn {
@@ -1119,7 +1182,7 @@
 
     @media (max-width: 560px) {
       .call-bell-btn { width: 36px; height: 36px; font-size: 16px; }
-      .order-kiosk-grid { grid-template-columns: repeat(2, 1fr); }
+      .kiosk-group-items { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
@@ -1129,7 +1192,7 @@
 <div class="top-right-controls">
       <button class="checkout-btn" id="checkoutBtn" title="지금까지 먹은 접시 결제하기">🧾 결제하기</button>
       <button class="add-image-btn" id="openModalBtn" title="스페셜 메뉴 등록">+</button>
-      <button class="call-bell-btn" id="openOrderModalBtn" title="셰프에게 초밥 주문하기">🔔</button>
+      <button class="call-bell-btn" id="openOrderModalBtn" title="초밥 주문하기">🔔</button>
     </div>
 
     <div class="toast-notice" id="toastNotice">아직 식사 중이에요! 다 먹고 난 뒤에 가져올 수 있습니다.</div>
@@ -1207,7 +1270,7 @@
           </svg>
         </div>
 
-        <div class="side-vessel-wrap tea-vessel" title="따뜻한 녹차">
+<div class="side-vessel-wrap tea-vessel" title="따뜻한 녹차">
           <div class="steam-wrap" style="top: -12px;">
             <div class="steam-line" style="height: 18px;"></div>
           </div>
@@ -1218,8 +1281,8 @@
             <path d="M 17 42 Q 42.5 47 68 42" stroke="#6f7863" stroke-width="3.5" fill="none" opacity="0.65" />
             <path d="M 18 50 Q 42.5 55 67 50" stroke="#6f7863" stroke-width="1.5" fill="none" opacity="0.5" />
             <ellipse cx="42.5" cy="20" rx="27.5" ry="8.5" fill="#e6e1d6" stroke="#b5aea0" stroke-width="2" />
-            <ellipse cx="42.5" cy="20.5" rx="25" ry="7" fill="#b8b1a3" />
-            <ellipse cx="42.5" cy="22" rx="23.5" ry="5.8" fill="url(#greenTeaSurface)" />
+            <ellipse cx="42.5" cy="22" rx="23.5" ry="5.8" fill="url(#greenTeaSurface)" opacity="0.76" />
+            <path d="M 25 21 Q 42.5 18 60 21" stroke="#e2f5c4" stroke-width="1" fill="none" opacity="0.45" stroke-linecap="round" />
             <defs>
               <linearGradient id="ceramicBody" x1="0%" y1="0%" x2="100%" y2="0%">
                 <stop offset="0%" stop-color="#c9c3b6" />
@@ -1228,8 +1291,9 @@
                 <stop offset="100%" stop-color="#969083" />
               </linearGradient>
               <radialGradient id="greenTeaSurface" cx="40%" cy="40%" r="60%">
-                <stop offset="0%" stop-color="#8aad53" />
-                <stop offset="100%" stop-color="#4e6924" />
+                <stop offset="0%" stop-color="#a3c965" />
+                <stop offset="70%" stop-color="#6b8f32" />
+                <stop offset="100%" stop-color="#3f5918" />
               </radialGradient>
             </defs>
           </svg>
@@ -1278,21 +1342,30 @@
     </div>
   </div>
   <script>
-    const SUSHI_MENU = [
+const SUSHI_MENU = [
       {
         id: 'soy_shrimp',
-        name: '새우장초밥',
+        name: '새우장 초밥',
         shortPlaqueName: '새우장',
         plateColor: '#4d784a',
         rimColor: '#92b090',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#f7f5f0" />
-            <path d="M 22 47 Q 55 26 86 45 Q 95 49 98 39 Q 90 50 83 49 Q 55 38 24 54 Z" fill="#9e4722" opacity="0.94"/>
-            <path d="M 26 44 Q 55 29 83 44" stroke="#c86d3b" stroke-width="4" fill="none" stroke-linecap="round"/>
-            <polygon points="85,44 100,34 97,48" fill="#7a2e12"/>
-            <rect x="51" y="36" width="9" height="30" fill="#1e241e"/>
-            <circle cx="55" cy="35" r="4" fill="#6ab04c"/>
+            <defs>
+              <linearGradient id="soyShrimpGrad" x1="0%" y1="0%" x2="100%" y2="30%">
+                <stop offset="0%" stop-color="#c96b38" />
+                <stop offset="55%" stop-color="#9e451c" />
+                <stop offset="100%" stop-color="#6e280b" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <polygon points="83,47 100,37 96,46 101,51 82,53" fill="#6e2409" stroke="#4f1804" stroke-width="1.15" stroke-linejoin="round"/>
+            <path d="M 20 46 C 17 48, 18 54, 23 54 C 46 43, 66 46, 84 55 C 88 56, 90 51, 86 47 C 66 32, 42 33, 20 46 Z" fill="url(#soyShrimpGrad)" stroke="#7a3012" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 36 41 Q 39 45 38 49 M 48 38 Q 51 42 50 47 M 63 39 Q 66 43 65 48 M 74 42 Q 76 45 75 49" stroke="#7a2c0f" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.7"/>
+            <path d="M 26 45 Q 54 32 80 45" stroke="#ffdfb8" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.65"/>
+            <rect x="51" y="35" width="9" height="31" rx="1.5" fill="#182018" stroke="#0f140f" stroke-width="1"/>
+            <ellipse cx="55.5" cy="34" rx="4.5" ry="3.2" fill="#78ba45" stroke="#58942b" stroke-width="1"/>
+            <circle cx="54" cy="33" r="1.2" fill="#b8eb8a" opacity="0.8"/>
           </svg>
         `
       },
@@ -1304,12 +1377,26 @@
         rimColor: '#dce6f2',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="32" y="34" width="50" height="32" rx="6" fill="#1b221a" stroke="#111" stroke-width="1"/>
-            <circle cx="45" cy="32" r="9" fill="#b8c99d"/>
-            <circle cx="57" cy="30" r="10" fill="#c5d6ab"/>
-            <circle cx="69" cy="33" r="8" fill="#a9ba8e"/>
-            <circle cx="52" cy="34" r="3" fill="#6b8e23"/>
-            <circle cx="63" cy="31" r="2.5" fill="#8b3a3a"/>
+            <defs>
+              <linearGradient id="noriTako" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#121712" />
+                <stop offset="45%" stop-color="#242e24" />
+                <stop offset="100%" stop-color="#0d120d" />
+              </linearGradient>
+            </defs>
+            <path d="M 32 34 L 32 59 C 32 65, 82 65, 82 59 L 82 34 Z" fill="url(#noriTako)" stroke="#0f140f" stroke-width="1.2"/>
+            <ellipse cx="57" cy="34" rx="25" ry="6" fill="#182018" stroke="#2c382c" stroke-width="1.1"/>
+            <circle cx="43" cy="33" r="7.5" fill="#b5c997" stroke="#8fa670" stroke-width="1.1"/>
+            <circle cx="69" cy="33" r="7.5" fill="#abc28c" stroke="#859c67" stroke-width="1.1"/>
+            <circle cx="52" cy="29" r="8.5" fill="#cce0ae" stroke="#9bb37b" stroke-width="1.1"/>
+            <circle cx="62" cy="30" r="8" fill="#c2d6a3" stroke="#94ab74" stroke-width="1.1"/>
+            <ellipse cx="56" cy="34" rx="11" ry="5.5" fill="#d7ebba" stroke="#a3bd82" stroke-width="1"/>
+            <circle cx="46" cy="31" r="2.2" fill="#8c3b3b" opacity="0.85"/>
+            <circle cx="64" cy="32" r="2" fill="#8c3b3b" opacity="0.85"/>
+            <circle cx="54" cy="34" r="2.2" fill="#5e8c22"/>
+            <circle cx="59" cy="28" r="1.8" fill="#5e8c22"/>
+            <circle cx="51" cy="28" r="1.5" fill="#ffffff" opacity="0.7"/>
+            <circle cx="61" cy="33" r="1.3" fill="#ffffff" opacity="0.7"/>
           </svg>
         `
       },
@@ -1321,14 +1408,24 @@
         rimColor: '#fff0b8',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="32" y="34" width="50" height="32" rx="6" fill="#1b221a"/>
-            <path d="M 35 34 Q 42 22 50 34 Z" fill="#589e42"/>
-            <circle cx="46" cy="33" r="5.5" fill="#ff5722"/><circle cx="45" cy="32" r="1.5" fill="#ffab91"/>
-            <circle cx="55" cy="31" r="6" fill="#ff6d00"/><circle cx="54" cy="30" r="1.5" fill="#ffd180"/>
-            <circle cx="64" cy="32" r="5.5" fill="#ff5722"/><circle cx="63" cy="31" r="1.5" fill="#ffab91"/>
-            <circle cx="72" cy="34" r="5" fill="#e64a19"/><circle cx="71" cy="33" r="1.5" fill="#ffab91"/>
-            <circle cx="51" cy="36" r="5" fill="#f4511e"/>
-            <circle cx="60" cy="36" r="5" fill="#ff6d00"/>
+            <defs>
+              <linearGradient id="noriIkura" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#121712" />
+                <stop offset="45%" stop-color="#242e24" />
+                <stop offset="100%" stop-color="#0d120d" />
+              </linearGradient>
+            </defs>
+            <path d="M 32 34 L 32 59 C 32 65, 82 65, 82 59 L 82 34 Z" fill="url(#noriIkura)" stroke="#0f140f" stroke-width="1.2"/>
+            <ellipse cx="57" cy="34" rx="25" ry="6" fill="#182018" stroke="#2c382c" stroke-width="1.1"/>
+            <path d="M 35 34 Q 41 21 51 33 Z" fill="#68b849" stroke="#46872d" stroke-width="1.1"/>
+            <circle cx="43" cy="33" r="5" fill="#e64a19" stroke="#bf360c" stroke-width="1"/><circle cx="41.5" cy="31.5" r="1.5" fill="#ffccbc"/>
+            <circle cx="51" cy="30" r="5.5" fill="#ff5722" stroke="#d84315" stroke-width="1"/><circle cx="49.5" cy="28.5" r="1.6" fill="#ffe0b2"/>
+            <circle cx="60" cy="29.5" r="5.5" fill="#ff6d00" stroke="#e65100" stroke-width="1"/><circle cx="58.5" cy="28" r="1.6" fill="#ffe0b2"/>
+            <circle cx="69" cy="31" r="5.2" fill="#f4511e" stroke="#bf360c" stroke-width="1"/><circle cx="67.5" cy="29.5" r="1.5" fill="#ffccbc"/>
+            <circle cx="75" cy="34" r="4.8" fill="#d84315" stroke="#ab2f07" stroke-width="1"/><circle cx="73.5" cy="32.5" r="1.4" fill="#ffab91"/>
+            <circle cx="48" cy="35" r="5" fill="#f4511e" stroke="#bf360c" stroke-width="1"/><circle cx="46.5" cy="33.5" r="1.5" fill="#ffd180"/>
+            <circle cx="56.5" cy="34.5" r="5.3" fill="#ff6d00" stroke="#e65100" stroke-width="1"/><circle cx="55" cy="33" r="1.6" fill="#fff3e0"/>
+            <circle cx="65" cy="35" r="5" fill="#ff5722" stroke="#d84315" stroke-width="1"/><circle cx="63.5" cy="33.5" r="1.5" fill="#ffd180"/>
           </svg>
         `
       },
@@ -1340,10 +1437,12 @@
         rimColor: '#92b090',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="32" y="44" width="50" height="21" rx="10" fill="#ffffff" />
-            <path d="M 24 48 Q 40 26 57 34 Q 74 26 90 48 Q 75 56 57 51 Q 39 56 24 48 Z" fill="#fcfaf2" stroke="#e6dec8" stroke-width="1.5"/>
-            <path d="M 38 38 Q 57 32 76 38" stroke="#d8ab70" stroke-width="2" fill="none" opacity="0.6"/>
-            <circle cx="56" cy="33" r="3.5" fill="#7cb342"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 22 47 C 19 36, 36 28, 56 34 C 76 28, 93 36, 90 47 C 88 55, 72 56, 56 50 C 40 56, 24 55, 22 47 Z" fill="#e8be8a" stroke="#c2955e" stroke-width="1.2" stroke-linejoin="round"/>
+            <ellipse cx="42" cy="42" rx="14.5" ry="9" fill="#fdf6e6" stroke="#d9b685" stroke-width="1.1" transform="rotate(-8 42 42)"/>
+            <ellipse cx="70" cy="42" rx="14.5" ry="9" fill="#fdf6e6" stroke="#d9b685" stroke-width="1.1" transform="rotate(8 70 42)"/>
+            <path d="M 55 34 Q 58 42 54 50" stroke="#c98838" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <path d="M 34 39 Q 42 36 48 39 M 63 39 Q 70 36 77 39" stroke="#ffffff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.75"/>
           </svg>
         `
       },
@@ -1355,12 +1454,18 @@
         rimColor: '#bda460',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <rect x="25" y="32" width="64" height="21" rx="9" fill="#fdfbf7" stroke="#e2d9c5" stroke-width="1.5"/>
-            <line x1="45" y1="32" x2="45" y2="53" stroke="#e8e0cf" stroke-width="1.2"/>
-            <line x1="68" y1="32" x2="68" y2="53" stroke="#e8e0cf" stroke-width="1.2"/>
-            <path d="M 50 32 Q 57 22 64 32 Z" fill="#fff275"/>
-            <circle cx="57" cy="32" r="3.5" fill="#ff6b35"/>
+            <defs>
+              <linearGradient id="aburiScallopGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#faeed7" />
+                <stop offset="65%" stop-color="#f2dab3" />
+                <stop offset="100%" stop-color="#e3bc84" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 24 44 C 21 35, 38 30, 57 31 C 76 32, 92 38, 89 47 C 87 55, 70 57, 55 55 C 38 53, 26 51, 24 44 Z" fill="#deb478" stroke="#ba8d4e" stroke-width="1.2"/>
+            <path d="M 25 40 C 23 32, 40 28, 58 29 C 76 30, 90 36, 88 43 C 86 50, 69 52, 54 50 C 38 48, 27 46, 25 40 Z" fill="url(#aburiScallopGrad)" stroke="#b37835" stroke-width="1.2" stroke-dasharray="18, 2, 25, 2"/>
+            <path d="M 44 33 Q 48 40 45 47 M 64 34 Q 68 41 65 48" stroke="#c99c61" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+            <path d="M 34 36 Q 56 32 78 38" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.6"/>
           </svg>
         `
       },
@@ -1372,13 +1477,25 @@
         rimColor: '#fff0b8',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 48 Q 57 27 94 47 L 90 56 Q 57 38 24 55 Z" fill="#6e3518"/>
-            <path d="M 24 46 Q 57 30 90 46" stroke="#421c08" stroke-width="4" fill="none"/>
-            <rect x="52" y="35" width="10" height="31" fill="#181f18"/>
-            <circle cx="45" cy="41" r="1" fill="#f5e6c8"/>
-            <circle cx="67" cy="42" r="1" fill="#f5e6c8"/>
-            <circle cx="72" cy="44" r="1" fill="#f5e6c8"/>
+            <defs>
+              <linearGradient id="unagiGrad" x1="0%" y1="0%" x2="100%" y2="40%">
+                <stop offset="0%" stop-color="#8f4619" />
+                <stop offset="50%" stop-color="#5c280b" />
+                <stop offset="100%" stop-color="#3b1704" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 20 50 L 25 36 Q 52 32 75 39 L 94 52 L 87 60 L 70 48 Q 48 42 23 55 Z" fill="url(#unagiGrad)" stroke="#3b1704" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 26 42 Q 52 36 73 43 L 89 54" stroke="#b86b35" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.7"/>
+            <line x1="36" y1="36" x2="39" y2="46" stroke="#260e02" stroke-width="2" stroke-linecap="round"/>
+            <line x1="46" y1="35" x2="49" y2="45" stroke="#260e02" stroke-width="2" stroke-linecap="round"/>
+            <line x1="66" y1="37" x2="69" y2="47" stroke="#260e02" stroke-width="2" stroke-linecap="round"/>
+            <line x1="76" y1="41" x2="79" y2="51" stroke="#260e02" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 51 34 L 61 34 L 60 66 L 50 66 Z" fill="#161c16" stroke="#0f140f" stroke-width="1"/>
+            <circle cx="43" cy="40" r="1.1" fill="#fff2cc"/>
+            <circle cx="48" cy="42" r="1.1" fill="#fff2cc"/>
+            <circle cx="67" cy="41" r="1.1" fill="#fff2cc"/>
+            <circle cx="72" cy="43" r="1.1" fill="#fff2cc"/>
           </svg>
         `
       },
@@ -1389,18 +1506,27 @@
         rimColor: '#e8c574',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="32" y="34" width="50" height="32" rx="6" fill="#1b221a"/>
-            <circle cx="43" cy="32" r="7.5" fill="#b8252a"/>
-            <circle cx="52" cy="30" r="8" fill="#c92a2a"/>
-            <circle cx="62" cy="30" r="8" fill="#b8252a"/>
-            <circle cx="71" cy="32" r="7" fill="#a61e22"/>
-            <path d="M 38 33 Q 57 26 75 33" stroke="#e03131" stroke-width="3" fill="none" stroke-linecap="round"/>
-            <ellipse cx="57" cy="28" rx="7.5" ry="4.5" fill="#ffb703"/>
-            <ellipse cx="55" cy="27" rx="3" ry="1.5" fill="#ffe169" opacity="0.8"/>
-            <circle cx="46" cy="33" r="1" fill="#fff"/>
-            <circle cx="67" cy="32" r="1" fill="#fff"/>
-            <circle cx="49" cy="34" r="2" fill="#589e42"/>
-            <circle cx="64" cy="34" r="2" fill="#589e42"/>
+            <defs>
+              <linearGradient id="noriYukhoe" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#121712" />
+                <stop offset="45%" stop-color="#242e24" />
+                <stop offset="100%" stop-color="#0d120d" />
+              </linearGradient>
+            </defs>
+            <path d="M 32 34 L 32 59 C 32 65, 82 65, 82 59 L 82 34 Z" fill="url(#noriYukhoe)" stroke="#0f140f" stroke-width="1.2"/>
+            <ellipse cx="57" cy="34" rx="25" ry="6" fill="#182018" stroke="#2c382c" stroke-width="1.1"/>
+            <circle cx="42" cy="32" r="7" fill="#a82024" stroke="#7d1316" stroke-width="1"/>
+            <circle cx="51" cy="29" r="7.5" fill="#c92a2a" stroke="#911818" stroke-width="1"/>
+            <circle cx="62" cy="29" r="7.5" fill="#b8252a" stroke="#851519" stroke-width="1"/>
+            <circle cx="71" cy="32" r="7" fill="#9e1c20" stroke="#731013" stroke-width="1"/>
+            <path d="M 38 34 Q 46 28 54 35 M 48 31 Q 57 25 66 33 M 58 34 Q 67 29 75 34" stroke="#e03838" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+            <path d="M 41 32 Q 52 28 62 33" stroke="#ff8787" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.65"/>
+            <ellipse cx="57" cy="28" rx="8" ry="4.8" fill="#ffaa00" stroke="#d48800" stroke-width="1.1"/>
+            <ellipse cx="55" cy="26.8" rx="3.2" ry="1.6" fill="#ffe885" opacity="0.85"/>
+            <circle cx="45" cy="34" r="1.1" fill="#fff8e7"/>
+            <circle cx="68" cy="33" r="1.1" fill="#fff8e7"/>
+            <circle cx="49" cy="35" r="2.2" fill="#5ca33c"/>
+            <circle cx="64" cy="35" r="2.2" fill="#4d8b31"/>
           </svg>
         `
       },
@@ -1411,14 +1537,23 @@
         rimColor: '#e8c574',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 14 51 Q 55 24 98 49 L 92 58 Q 55 37 20 58 Z" fill="#8d493a"/>
-            <path d="M 24 46 Q 55 29 88 46" stroke="#b56555" stroke-width="4" fill="none" stroke-linecap="round"/>
-            <line x1="36" y1="39" x2="41" y2="48" stroke="#3d1e16" stroke-width="2" stroke-linecap="round"/>
-            <line x1="50" y1="36" x2="55" y2="45" stroke="#3d1e16" stroke-width="2" stroke-linecap="round"/>
-            <line x1="65" y1="37" x2="70" y2="46" stroke="#3d1e16" stroke-width="2" stroke-linecap="round"/>
-            <path d="M 42 36 Q 57 26 72 36" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.85"/>
-            <circle cx="57" cy="34" r="3" fill="#6ab04c"/>
+            <defs>
+              <linearGradient id="aburiBeefGrad" x1="0%" y1="0%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#7a3e2e" />
+                <stop offset="50%" stop-color="#a85848" />
+                <stop offset="100%" stop-color="#6e3526" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 15 55 C 19 43, 25 36, 33 34 C 48 31, 63 32, 77 36 C 85 39, 92 48, 97 60 C 90 59, 82 53, 75 49 C 61 44, 46 44, 32 48 C 25 50, 19 54, 15 55 Z" fill="url(#aburiBeefGrad)" stroke="#59281b" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 24 46 Q 55 32 88 50" stroke="#c97a6b" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.75"/>
+            <line x1="35" y1="37" x2="40" y2="46" stroke="#361810" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="49" y1="35" x2="54" y2="44" stroke="#361810" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="63" y1="36" x2="68" y2="45" stroke="#361810" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="76" y1="40" x2="80" y2="49" stroke="#361810" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M 36 42 Q 44 31 50 41 Q 57 29 64 41 Q 71 31 78 42" stroke="#fffdf7" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.9"/>
+            <path d="M 38 44 Q 56 32 76 44" stroke="#3b1708" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.85"/>
+            <circle cx="57" cy="33" r="3" fill="#6ab04c" stroke="#4d8b31" stroke-width="0.9"/>
           </svg>
         `
       },
@@ -1429,46 +1564,46 @@
         rimColor: '#92b090',
         svg: `
           <svg width="135" height="112" viewBox="10 2 115 112">
-            <polygon points="33,96 102,96 108,106 27,106" fill="#d8b07c" stroke="#8c6230" stroke-width="1.5"/>
+            <polygon points="33,96 102,96 108,106 27,106" fill="#d8b07c" stroke="#9c6f38" stroke-width="1.2"/>
             <rect x="27" y="105" width="81" height="4" rx="1" fill="#9c6f38"/>
-            <rect x="63" y="60" width="9" height="40" rx="2" fill="url(#woodPillar)"/>
-            <polygon points="39,60 55,60 46,101" fill="#151c15" stroke="#0d120d" stroke-width="1"/>
-            <polygon points="79,60 95,60 87,101" fill="#151c15" stroke="#0d120d" stroke-width="1"/>
-            <polygon points="20,50 115,50 121,61 14,61" fill="#e6c291" stroke="#9c6f38" stroke-width="1.5"/>
+            <rect x="63" y="60" width="9" height="40" rx="2" fill="url(#woodPillar)" stroke="#7a5328" stroke-width="1"/>
+            <polygon points="39,60 55,60 46,101" fill="#151c15" stroke="#0f140f" stroke-width="1.15"/>
+            <polygon points="79,60 95,60 87,101" fill="#151c15" stroke="#0f140f" stroke-width="1.15"/>
+            <polygon points="20,50 115,50 121,61 14,61" fill="#e6c291" stroke="#9c6f38" stroke-width="1.2"/>
             <rect x="14" y="60" width="107" height="4.5" rx="1.5" fill="#ad7d42"/>
             <ellipse cx="47" cy="55" rx="15" ry="3.8" fill="#2a1d10"/>
             <ellipse cx="87" cy="55" rx="15" ry="3.8" fill="#2a1d10"/>
             <g>
-              <polygon points="28,25 48,2 66,25" fill="#1c261b" stroke="#101710" stroke-width="1"/>
-              <ellipse cx="47" cy="26" rx="15" ry="7.5" fill="#ffffff"/>
-              <rect x="51" y="9" width="4.5" height="17" rx="1" fill="#ffd60a" transform="rotate(14 51 9)"/>
-              <rect x="55" y="11" width="4" height="16" rx="1" fill="#ffea00" transform="rotate(20 55 11)"/>
-              <circle cx="40" cy="24" r="5" fill="#ff6d00"/>
-              <circle cx="47" cy="22" r="5.5" fill="#ff8500"/>
-              <circle cx="44" cy="27" r="5" fill="#ff5400"/>
-              <circle cx="52" cy="26" r="4.5" fill="#ff6d00"/>
+              <polygon points="28,25 48,2 66,25" fill="#1c261b" stroke="#0f140f" stroke-width="1.15"/>
+              <ellipse cx="47" cy="26" rx="15" ry="7.5" fill="#ffffff" stroke="#e2dcd3" stroke-width="1"/>
+              <rect x="51" y="9" width="4.5" height="17" rx="1" fill="#ffd60a" stroke="#d4aa00" stroke-width="0.9" transform="rotate(14 51 9)"/>
+              <rect x="55" y="11" width="4" height="16" rx="1" fill="#ffea00" stroke="#d4aa00" stroke-width="0.9" transform="rotate(20 55 11)"/>
+              <circle cx="40" cy="24" r="5" fill="#ff6d00" stroke="#cc5200" stroke-width="0.9"/>
+              <circle cx="47" cy="22" r="5.5" fill="#ff8500" stroke="#cc5200" stroke-width="0.9"/>
+              <circle cx="44" cy="27" r="5" fill="#ff5400" stroke="#cc4400" stroke-width="0.9"/>
+              <circle cx="52" cy="26" r="4.5" fill="#ff6d00" stroke="#cc5200" stroke-width="0.9"/>
               <path d="M 47 27 Q 44 15 39 13" stroke="#e8f5e9" stroke-width="1.8" fill="none"/>
               <path d="M 49 27 Q 49 14 47 10" stroke="#e8f5e9" stroke-width="1.8" fill="none"/>
-              <ellipse cx="38" cy="13" rx="3.5" ry="2.2" fill="#4caf50" transform="rotate(-20 38 13)"/>
-              <ellipse cx="47" cy="9" rx="3.5" ry="2.2" fill="#388e3c" transform="rotate(10 47 9)"/>
-              <ellipse cx="44" cy="16" rx="3" ry="2" fill="#66bb6a"/>
-              <polygon points="28,25 66,25 58,56 36,56" fill="url(#noriCone)"/>
+              <ellipse cx="38" cy="13" rx="3.5" ry="2.2" fill="#4caf50" stroke="#388e3c" stroke-width="0.8" transform="rotate(-20 38 13)"/>
+              <ellipse cx="47" cy="9" rx="3.5" ry="2.2" fill="#388e3c" stroke="#2e7d32" stroke-width="0.8" transform="rotate(10 47 9)"/>
+              <ellipse cx="44" cy="16" rx="3" ry="2" fill="#66bb6a" stroke="#4caf50" stroke-width="0.8"/>
+              <polygon points="28,25 66,25 58,56 36,56" fill="url(#noriCone)" stroke="#0f140f" stroke-width="1.15"/>
             </g>
             <g>
-              <polygon points="68,25 88,2 106,25" fill="#1c261b" stroke="#101710" stroke-width="1"/>
-              <ellipse cx="87" cy="26" rx="15" ry="7.5" fill="#ffffff"/>
-              <rect x="91" y="9" width="4.5" height="17" rx="1" fill="#ffd60a" transform="rotate(12 91 9)"/>
-              <rect x="95" y="11" width="4" height="16" rx="1" fill="#ffea00" transform="rotate(18 95 11)"/>
-              <circle cx="80" cy="24" r="5" fill="#ff6d00"/>
-              <circle cx="87" cy="22" r="5.5" fill="#ff8500"/>
-              <circle cx="84" cy="27" r="5" fill="#ff5400"/>
-              <circle cx="92" cy="26" r="4.5" fill="#ff6d00"/>
+              <polygon points="68,25 88,2 106,25" fill="#1c261b" stroke="#0f140f" stroke-width="1.15"/>
+              <ellipse cx="87" cy="26" rx="15" ry="7.5" fill="#ffffff" stroke="#e2dcd3" stroke-width="1"/>
+              <rect x="91" y="9" width="4.5" height="17" rx="1" fill="#ffd60a" stroke="#d4aa00" stroke-width="0.9" transform="rotate(12 91 9)"/>
+              <rect x="95" y="11" width="4" height="16" rx="1" fill="#ffea00" stroke="#d4aa00" stroke-width="0.9" transform="rotate(18 95 11)"/>
+              <circle cx="80" cy="24" r="5" fill="#ff6d00" stroke="#cc5200" stroke-width="0.9"/>
+              <circle cx="87" cy="22" r="5.5" fill="#ff8500" stroke="#cc5200" stroke-width="0.9"/>
+              <circle cx="84" cy="27" r="5" fill="#ff5400" stroke="#cc4400" stroke-width="0.9"/>
+              <circle cx="92" cy="26" r="4.5" fill="#ff6d00" stroke="#cc5200" stroke-width="0.9"/>
               <path d="M 87 27 Q 84 15 79 13" stroke="#e8f5e9" stroke-width="1.8" fill="none"/>
               <path d="M 89 27 Q 89 14 87 10" stroke="#e8f5e9" stroke-width="1.8" fill="none"/>
-              <ellipse cx="78" cy="13" rx="3.5" ry="2.2" fill="#4caf50" transform="rotate(-20 78 13)"/>
-              <ellipse cx="87" cy="9" rx="3.5" ry="2.2" fill="#388e3c" transform="rotate(10 87 9)"/>
-              <ellipse cx="84" cy="16" rx="3" ry="2" fill="#66bb6a"/>
-              <polygon points="68,25 106,25 98,56 76,56" fill="url(#noriCone)"/>
+              <ellipse cx="78" cy="13" rx="3.5" ry="2.2" fill="#4caf50" stroke="#388e3c" stroke-width="0.8" transform="rotate(-20 78 13)"/>
+              <ellipse cx="87" cy="9" rx="3.5" ry="2.2" fill="#388e3c" stroke="#2e7d32" stroke-width="0.8" transform="rotate(10 87 9)"/>
+              <ellipse cx="84" cy="16" rx="3" ry="2" fill="#66bb6a" stroke="#4caf50" stroke-width="0.8"/>
+              <polygon points="68,25 106,25 98,56 76,56" fill="url(#noriCone)" stroke="#0f140f" stroke-width="1.15"/>
             </g>
             <defs>
               <linearGradient id="woodPillar" x1="0%" y1="0%" x2="100%" y2="0%">
@@ -1492,10 +1627,18 @@
         rimColor: '#dce6f2',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 22 48 Q 55 27 86 46 L 82 54 Q 55 39 26 54 Z" fill="#ff7a59"/>
-            <path d="M 35 41 L 40 50 M 50 38 L 53 48 M 65 39 L 66 49" stroke="#ffffff" stroke-width="2.5" stroke-linecap="round"/>
-            <polygon points="84,45 99,36 96,50" fill="#e0482d"/>
+            <defs>
+              <linearGradient id="cookedEbiGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#ff6b4a" />
+                <stop offset="65%" stop-color="#ff9980" />
+                <stop offset="100%" stop-color="#fff5f0" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <polygon points="84,45 101,34 97,44 102,49 83,51" fill="#e03e24" stroke="#b82c14" stroke-width="1.15" stroke-linejoin="round"/>
+            <path d="M 21 45 C 17 47, 19 54, 25 53 C 46 43, 66 44, 83 53 C 87 54, 89 49, 85 45 C 66 30, 42 31, 21 45 Z" fill="url(#cookedEbiGrad)" stroke="#d95338" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 34 40 L 39 49 M 46 37 L 50 47 M 58 37 L 61 47 M 70 39 L 72 49" stroke="#fff5f0" stroke-width="2.4" stroke-linecap="round" opacity="0.88"/>
+            <path d="M 27 44 Q 54 31 78 43" stroke="#ffffff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.6"/>
           </svg>
         `
       },
@@ -1506,36 +1649,67 @@
         rimColor: '#bda460',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 48 Q 57 27 94 47 L 90 56 Q 57 38 24 55 Z" fill="#8b4513"/>
-            <path d="M 24 46 Q 57 30 90 46" stroke="#5c2c0c" stroke-width="4" fill="none"/>
-            <rect x="52" y="35" width="10" height="31" fill="#181f18"/>
+            <defs>
+              <linearGradient id="anagoGrad" x1="0%" y1="0%" x2="100%" y2="30%">
+                <stop offset="0%" stop-color="#e0b582" />
+                <stop offset="50%" stop-color="#ad6e34" />
+                <stop offset="100%" stop-color="#7a4414" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 20 50 L 25 36 Q 52 32 75 39 L 94 52 L 87 60 L 70 48 Q 48 42 23 55 Z" fill="url(#anagoGrad)" stroke="#69380f" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 38 38 Q 56 34 71 42" stroke="#5c2808" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+            <path d="M 26 42 Q 52 36 73 43 L 88 53" stroke="#f5d9b8" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.65"/>
+            <path d="M 51 34 L 61 34 L 60 66 L 50 66 Z" fill="#181f18" stroke="#0f140f" stroke-width="1"/>
           </svg>
         `
       },
-      {
+{
         id: 'tamago',
-        name: '계란 초밥',
+        name: '계란말이 초밥',
         plateColor: '#91c1eb',
         rimColor: '#ffffff',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="33" y="45" width="48" height="20" rx="10" fill="#ffffff" />
-            <rect x="24" y="31" width="66" height="22" rx="6" fill="#ffd23f" stroke="#e6b417" stroke-width="1.5"/>
-            <rect x="52" y="30" width="10" height="36" fill="#1c241c"/>
+            <defs>
+              <linearGradient id="tamagoSideGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#f7c844" />
+                <stop offset="100%" stop-color="#e09f1f" />
+              </linearGradient>
+              <linearGradient id="tamagoTopGrad" x1="0%" y1="0%" x2="100%" y2="20%">
+                <stop offset="0%" stop-color="#fff4b8" />
+                <stop offset="50%" stop-color="#ffea85" />
+                <stop offset="100%" stop-color="#fae06b" />
+              </linearGradient>
+            </defs>
+            <rect x="29" y="42" width="56" height="22" rx="6.5" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 27 29.5 L 87 29.5 Q 91.5 29.5 91.5 33.5 L 91.5 42.5 Q 91.5 46.5 87 47 L 27 47 Q 22.5 46.5 22.5 42.5 L 22.5 33.5 Q 22.5 29.5 27 29.5 Z" fill="url(#tamagoSideGrad)" stroke="#c78d14" stroke-width="1.2" stroke-linejoin="round" />
+            <path d="M 27 30.2 L 87 30.2 Q 90.2 30.2 90.2 33.2 L 90.2 36.8 Q 90.2 39.8 87 40.2 L 27 40.2 Q 23.8 39.8 23.8 36.8 L 23.8 33.2 Q 23.8 30.2 27 30.2 Z" fill="url(#tamagoTopGrad)" />
+            <path d="M 33 33.5 L 81 33.5 Q 83.5 33.5 83.5 35.2 Q 83.5 36.8 81 36.8 L 35 36.8" stroke="#ebd467" stroke-width="1.2" fill="none" stroke-linecap="round" />
+            <path d="M 25 39.8 L 89 39.8" stroke="#fff9d2" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.85" />
+            <path d="M 51 29.2 L 63 29.2 L 63.5 64.5 L 50.5 64.5 Z" fill="#182018" stroke="#0f140f" stroke-width="1.1" stroke-linejoin="round" />
+            <rect x="51" y="29.5" width="12" height="10.7" fill="#222e22" />
           </svg>
         `
       },
       {
         id: 'salmon',
-        name: '연어 초밥',
+        name: '생연어 초밥',
         plateColor: '#4d784a',
         rimColor: '#92b090',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 18 51 Q 55 26 95 48 L 89 57 Q 55 37 23 58 Z" fill="#ff784f"/>
-            <path d="M 35 44 L 43 52 M 50 40 L 58 49 M 66 41 L 74 51" stroke="#ffb59e" stroke-width="2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="salmonGrad" x1="0%" y1="0%" x2="100%" y2="40%">
+                <stop offset="0%" stop-color="#ff8863" />
+                <stop offset="55%" stop-color="#ff6b42" />
+                <stop offset="100%" stop-color="#e8522a" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="url(#salmonGrad)" stroke="#d94e28" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 31 45 L 40 35 M 45 45 L 55 34 M 60 46 L 70 36 M 74 49 L 83 41" stroke="#ffd2c2" stroke-width="2.1" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 30 37 Q 55 32 78 39" stroke="#ffffff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.45"/>
           </svg>
         `
       },
@@ -1546,9 +1720,17 @@
         rimColor: '#e8c574',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#c92a2a"/>
-            <path d="M 32 45 Q 55 33 82 45" stroke="#e03131" stroke-width="3" fill="none"/>
+            <defs>
+              <linearGradient id="tunaGrad" x1="0%" y1="0%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#e03131" />
+                <stop offset="60%" stop-color="#bd1e24" />
+                <stop offset="100%" stop-color="#961217" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 19 48 L 28 34 Q 56 32 82 39 L 94 51 L 86 59 Q 57 44 23 53 Z" fill="url(#tunaGrad)" stroke="#8c1115" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 35 46 L 44 35 M 52 46 L 61 36 M 69 49 L 78 39" stroke="#f78383" stroke-width="1.5" stroke-linecap="round" opacity="0.55"/>
+            <path d="M 29 37 Q 56 34 80 41" stroke="#ffadb0" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.55"/>
           </svg>
         `
       },
@@ -1559,9 +1741,17 @@
         rimColor: '#e8c574',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#9e141a"/>
-            <path d="M 32 45 Q 55 33 82 45" stroke="#b81d24" stroke-width="3" fill="none"/>
+            <defs>
+              <linearGradient id="akamiGrad" x1="0%" y1="0%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#b5141c" />
+                <stop offset="55%" stop-color="#8c0b12" />
+                <stop offset="100%" stop-color="#61050a" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 19 48 L 28 34 Q 56 32 82 39 L 94 51 L 86 59 Q 57 44 23 53 Z" fill="url(#akamiGrad)" stroke="#520408" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 29 37 Q 56 34 80 41" stroke="#e65c63" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.6"/>
+            <circle cx="56" cy="34" r="3.5" fill="#78ba45" stroke="#58942b" stroke-width="0.9"/>
           </svg>
         `
       },
@@ -1572,9 +1762,17 @@
         rimColor: '#fff5cc',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 19 50 Q 55 25 94 48 L 88 57 Q 55 38 24 57 Z" fill="#e86f7c"/>
-            <path d="M 32 45 L 42 53 M 48 40 L 58 50 M 64 40 L 74 51 M 78 44 L 84 52" stroke="#ffd6dc" stroke-width="2.2" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="otoroGrad" x1="0%" y1="0%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#ffa8b8" />
+                <stop offset="50%" stop-color="#eb6b80" />
+                <stop offset="100%" stop-color="#d44a61" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 19 48 L 28 34 Q 56 32 82 39 L 94 51 L 86 59 Q 57 44 23 53 Z" fill="url(#otoroGrad)" stroke="#c74258" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 28 48 L 41 35 M 41 48 L 54 35 M 55 49 L 68 37 M 69 52 L 81 40 M 80 56 L 89 47" stroke="#fff0f3" stroke-width="2.3" stroke-linecap="round" opacity="0.9"/>
+            <path d="M 29 37 Q 56 34 80 41" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.65"/>
           </svg>
         `
       },
@@ -1585,13 +1783,21 @@
         rimColor: '#f4d58d',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 50 Q 55 26 93 48 L 88 56 Q 55 38 24 56 Z" fill="#c98ca7"/>
-            <path d="M 22 46 Q 55 24 91 44 L 88 50 Q 55 32 25 50 Z" fill="#4a5d73"/>
-            <path d="M 26 47 Q 55 29 88 47" stroke="#dce4ec" stroke-width="3" fill="none"/>
-            <line x1="42" y1="36" x2="46" y2="44" stroke="#ffffff" stroke-width="1.5"/>
-            <line x1="56" y1="34" x2="60" y2="42" stroke="#ffffff" stroke-width="1.5"/>
-            <line x1="70" y1="36" x2="74" y2="44" stroke="#ffffff" stroke-width="1.5"/>
+            <defs>
+              <linearGradient id="sabaSkinGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#2c3e54" />
+                <stop offset="50%" stop-color="#56708c" />
+                <stop offset="100%" stop-color="#253547" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 18 49 L 29 35 Q 56 32 82 39 L 94 51 L 85 59 Q 56 45 23 54 Z" fill="#cf7e8e" stroke="#ad5e6d" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 22 45 L 29 35 Q 56 32 82 39 L 91 48 Q 56 37 22 45 Z" fill="url(#sabaSkinGrad)" stroke="#253547" stroke-width="1" stroke-linejoin="round"/>
+            <path d="M 23 46 Q 56 36 90 49" stroke="#e6eff7" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <line x1="39" y1="35" x2="43" y2="43" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
+            <line x1="51" y1="34" x2="55" y2="42" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
+            <line x1="63" y1="35" x2="67" y2="43" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
+            <line x1="74" y1="38" x2="78" y2="46" stroke="#ffffff" stroke-width="1.6" stroke-linecap="round" opacity="0.85"/>
           </svg>
         `
       },
@@ -1602,11 +1808,21 @@
         rimColor: '#f4d58d',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 49 Q 54 27 88 45 L 85 52 Q 54 36 24 54 Z" fill="#ff8fa3"/>
-            <path d="M 24 44 Q 56 23 90 42 L 87 48 Q 56 32 28 49 Z" fill="#ff758f"/>
-            <polygon points="86,42 104,33 99,45" fill="#e63946"/>
-            <polygon points="84,47 102,42 97,51" fill="#d62828"/>
+            <defs>
+              <linearGradient id="amaebiBodyGrad" x1="0%" y1="0%" x2="100%" y2="20%">
+                <stop offset="0%" stop-color="#fff3f0" />
+                <stop offset="55%" stop-color="#ffdcd4" />
+                <stop offset="100%" stop-color="#ffbfb0" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <polygon points="84,41 101,33 97,44" fill="#ff8570" stroke="#d95b45" stroke-width="1.1" stroke-linejoin="round"/>
+            <path d="M 24 42 C 20 44, 22 49, 27 48 C 48 39, 68 40, 85 48 C 88 49, 90 44, 87 41 C 68 27, 45 28, 24 42 Z" fill="url(#amaebiBodyGrad)" stroke="#e59888" stroke-width="1.15" stroke-linejoin="round"/>
+            <path d="M 38 37 Q 41 39 40 43 M 51 34 Q 54 37 53 41 M 64 35 Q 67 38 66 42 M 76 38 Q 78 40 77 44" stroke="#ff7a66" stroke-width="1.2" fill="none" stroke-linecap="round" opacity="0.55"/>
+            <polygon points="82,46 100,41 95,51" fill="#ff7058" stroke="#d95b45" stroke-width="1.1" stroke-linejoin="round"/>
+            <path d="M 20 47 C 16 49, 18 55, 24 54 C 46 43, 66 44, 83 53 C 87 54, 89 49, 85 45 C 66 31, 42 32, 20 47 Z" fill="url(#amaebiBodyGrad)" stroke="#e08b79" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 33 43 Q 36 46 35 50 M 45 39 Q 48 42 47 47 M 58 38 Q 61 41 60 46 M 70 40 Q 73 43 72 48" stroke="#ff6b52" stroke-width="1.3" fill="none" stroke-linecap="round" opacity="0.62"/>
+            <path d="M 28 45 Q 54 31 79 43" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.75"/>
           </svg>
         `
       },
@@ -1617,10 +1833,13 @@
         rimColor: '#fff5cc',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 22 48 Q 55 25 87 45 L 83 54 Q 55 38 26 54 Z" fill="#ff9ebb"/>
-            <path d="M 36 40 L 42 49 M 52 36 L 56 47 M 68 38 L 70 48" stroke="#d90429" stroke-width="2" stroke-linecap="round"/>
-            <polygon points="84,44 100,35 96,49" fill="#d90429"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <polygon points="84,44 101,34 96,49" fill="#d90429" stroke="#a3021e" stroke-width="1.15" stroke-linejoin="round"/>
+            <polygon points="84,44 98,38 94,48" fill="#ff4d6d" opacity="0.7"/>
+            <path d="M 21 46 C 17 48, 19 54, 25 53 C 46 43, 66 44, 83 54 C 87 55, 89 49, 85 45 C 66 30, 42 31, 21 46 Z" fill="#ffe5ec" stroke="#e099ab" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 35 40 L 41 49 M 46 37 L 51 47 M 57 36 L 61 47 M 68 38 L 71 48 M 77 41 L 79 50" stroke="#d90429" stroke-width="2.2" stroke-linecap="round" opacity="0.88"/>
+            <path d="M 38 39 L 43 48 M 49 36 L 54 46 M 60 36 L 64 46 M 71 39 L 74 48" stroke="#ffffff" stroke-width="1.2" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 28 44 Q 55 29 80 43" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.65"/>
           </svg>
         `
       },
@@ -1631,9 +1850,20 @@
         rimColor: '#f4d58d',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 19 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#f7f4eb" stroke="#e2dccb" stroke-width="1.2"/>
-            <path d="M 30 46 Q 55 33 82 46" stroke="#f2d5dc" stroke-width="2.5" fill="none" opacity="0.7"/>
+            <defs>
+              <linearGradient id="hirameGrad" x1="0%" y1="0%" x2="100%" y2="50%">
+                <stop offset="0%" stop-color="#ffffff" />
+                <stop offset="65%" stop-color="#fcfaf5" />
+                <stop offset="100%" stop-color="#eee8dc" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <ellipse cx="56" cy="41" rx="5.5" ry="3.5" fill="#78ba45" opacity="0.45"/>
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="url(#hirameGrad)" stroke="#cfc5b2" stroke-width="1.2" opacity="0.95" stroke-linejoin="round"/>
+            <line x1="38" y1="39" x2="45" y2="46" stroke="#e6dfd1" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="52" y1="37" x2="59" y2="45" stroke="#e6dfd1" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="66" y1="39" x2="73" y2="47" stroke="#e6dfd1" stroke-width="1.4" stroke-linecap="round"/>
+            <path d="M 30 37 Q 55 32 78 39" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.85"/>
           </svg>
         `
       },
@@ -1644,14 +1874,16 @@
         rimColor: '#bda460',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 49 Q 55 26 92 47 L 87 56 Q 55 38 25 56 Z" fill="#fcfaf5" stroke="#dcd6c8" stroke-width="1.5"/>
-            <line x1="36" y1="39" x2="39" y2="49" stroke="#e0d8c8" stroke-width="1.5"/>
-            <line x1="46" y1="37" x2="49" y2="47" stroke="#e0d8c8" stroke-width="1.5"/>
-            <line x1="56" y1="36" x2="59" y2="46" stroke="#e0d8c8" stroke-width="1.5"/>
-            <line x1="66" y1="37" x2="69" y2="47" stroke="#e0d8c8" stroke-width="1.5"/>
-            <line x1="76" y1="39" x2="79" y2="49" stroke="#e0d8c8" stroke-width="1.5"/>
-            <circle cx="56" cy="35" r="3.5" fill="#6ab04c"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#fffdf7" stroke="#cfc5b4" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 24 46 Q 55 33 88 51" stroke="#faeed7" stroke-width="3.2" fill="none" stroke-linecap="round"/>
+            <line x1="34" y1="37" x2="37" y2="47" stroke="#e0d5c1" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="42" y1="35" x2="45" y2="45" stroke="#e0d5c1" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="50" y1="34" x2="53" y2="44" stroke="#e0d5c1" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="58" y1="34" x2="61" y2="44" stroke="#e0d5c1" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="66" y1="36" x2="69" y2="46" stroke="#e0d5c1" stroke-width="1.6" stroke-linecap="round"/>
+            <line x1="74" y1="39" x2="77" y2="49" stroke="#e0d5c1" stroke-width="1.6" stroke-linecap="round"/>
+            <ellipse cx="56" cy="33" rx="4.2" ry="3" fill="#6ab04c" stroke="#4d8b31" stroke-width="0.9"/>
           </svg>
         `
       },
@@ -1662,12 +1894,13 @@
         rimColor: '#f4d58d',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 50 Q 55 26 93 48 L 88 56 Q 55 38 24 56 Z" fill="#c96f7b"/>
-            <path d="M 24 45 Q 55 26 89 45" stroke="#b8c4cc" stroke-width="5" fill="none" stroke-linecap="round"/>
-            <circle cx="56" cy="34" r="4.5" fill="#f3d58d"/>
-            <circle cx="53" cy="36" r="2.5" fill="#589e42"/>
-            <circle cx="59" cy="36" r="2.5" fill="#589e42"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#cf6574" stroke="#b04b59" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 22 46 C 28 36, 46 32, 76 37 C 83 40, 89 48, 93 57" stroke="#b8c7d4" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            <path d="M 26 43 C 34 35, 52 33, 76 38" stroke="#ffffff" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.75"/>
+            <ellipse cx="56" cy="32.5" rx="5.5" ry="3.5" fill="#f7dfa0" stroke="#d4b059" stroke-width="1"/>
+            <circle cx="52.5" cy="34.5" r="2.3" fill="#5ca33c"/>
+            <circle cx="59.5" cy="34.5" r="2.3" fill="#4d8b31"/>
           </svg>
         `
       },
@@ -1678,11 +1911,12 @@
         rimColor: '#ffffff',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 16 49 Q 55 25 97 47 L 91 55 Q 55 37 21 55 Z" fill="#b56565"/>
-            <path d="M 19 45 Q 55 24 94 44" stroke="#5c6f84" stroke-width="4.5" fill="none"/>
-            <path d="M 21 47 Q 55 27 92 46" stroke="#d8e2eb" stroke-width="2" fill="none"/>
-            <circle cx="56" cy="34" r="4" fill="#e6c875"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 15 55 C 19 43, 26 36, 34 34 C 48 31, 63 32, 77 36 C 85 39, 92 48, 97 60 C 90 59, 82 53, 74 49 C 60 44, 46 44, 32 48 C 24 50, 19 54, 15 55 Z" fill="#bd5959" stroke="#9e4242" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 19 48 C 25 37, 45 32, 77 37 C 84 40, 90 48, 95 57" stroke="#4f6478" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            <path d="M 21 49 C 28 39, 47 34, 77 39 C 83 42, 88 49, 93 57" stroke="#e2ecf5" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="56" cy="32.5" rx="5" ry="3.2" fill="#f2d485" stroke="#cfa94a" stroke-width="1"/>
+            <circle cx="56" cy="34" r="2" fill="#5ca33c"/>
           </svg>
         `
       },
@@ -1693,11 +1927,21 @@
         rimColor: '#fff5cc',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="32" y="34" width="50" height="32" rx="6" fill="#1b221a"/>
-            <ellipse cx="46" cy="31" rx="10" ry="6" fill="#e69500" transform="rotate(-10 46 31)"/>
-            <ellipse cx="58" cy="29" rx="11" ry="6.5" fill="#ffa700"/>
-            <ellipse cx="69" cy="32" rx="9" ry="5.5" fill="#d98600" transform="rotate(12 69 32)"/>
-            <ellipse cx="53" cy="33" rx="9" ry="5" fill="#ffb72b"/>
+            <defs>
+              <linearGradient id="noriUni" x1="0%" y1="0%" x2="100%" y2="0%">
+                <stop offset="0%" stop-color="#121712" />
+                <stop offset="45%" stop-color="#242e24" />
+                <stop offset="100%" stop-color="#0d120d" />
+              </linearGradient>
+            </defs>
+            <path d="M 32 34 L 32 59 C 32 65, 82 65, 82 59 L 82 34 Z" fill="url(#noriUni)" stroke="#0f140f" stroke-width="1.2"/>
+            <ellipse cx="57" cy="34" rx="25" ry="6" fill="#182018" stroke="#2c382c" stroke-width="1.1"/>
+            <ellipse cx="45" cy="31" rx="10.5" ry="6.2" fill="#e08e00" stroke="#b87000" stroke-width="1.1" transform="rotate(-12 45 31)"/>
+            <ellipse cx="69" cy="31.5" rx="10" ry="6" fill="#d98200" stroke="#b06800" stroke-width="1.1" transform="rotate(14 69 31.5)"/>
+            <ellipse cx="57" cy="28.5" rx="11.5" ry="6.8" fill="#ffa200" stroke="#cc7a00" stroke-width="1.1"/>
+            <ellipse cx="52" cy="33.5" rx="9.5" ry="5.5" fill="#ffb72b" stroke="#d99100" stroke-width="1.1"/>
+            <ellipse cx="63" cy="34" rx="9" ry="5.2" fill="#ffaa1c" stroke="#d98a00" stroke-width="1.1"/>
+            <path d="M 51 27 Q 57 25 63 27 M 48 33 Q 53 31 57 33" stroke="#ffe194" stroke-width="1.4" fill="none" stroke-linecap="round" opacity="0.75"/>
           </svg>
         `
       },
@@ -1708,9 +1952,20 @@
         rimColor: '#ffffff',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 49 Q 55 26 92 47 L 87 56 Q 55 38 25 56 Z" fill="#fcf8f5" stroke="#8c2d38" stroke-width="2.2"/>
-            <rect x="52" y="34" width="9" height="32" fill="#1c241c"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 18 45 C 14 48, 16 56, 23 56 C 45 45, 68 47, 87 57 C 93 58, 96 52, 92 47 C 72 30, 42 30, 18 45 Z" fill="#a8424d" stroke="#7d2832" stroke-width="1.2" stroke-linejoin="round"/>
+            <g stroke="#7d2832" stroke-width="1.1">
+              <circle cx="22" cy="52" r="3.6" fill="#f7b2ad"/><circle cx="22" cy="52" r="1.4" fill="#c95b5b" stroke="none"/>
+              <circle cx="31" cy="50" r="3.8" fill="#f7b2ad"/><circle cx="31" cy="50" r="1.5" fill="#c95b5b" stroke="none"/>
+              <circle cx="41" cy="48" r="3.6" fill="#f7b2ad"/><circle cx="41" cy="48" r="1.4" fill="#c95b5b" stroke="none"/>
+              <circle cx="69" cy="49" r="3.5" fill="#f7b2ad"/><circle cx="69" cy="49" r="1.3" fill="#c95b5b" stroke="none"/>
+              <circle cx="79" cy="51.5" r="3.6" fill="#f7b2ad"/><circle cx="79" cy="51.5" r="1.4" fill="#c95b5b" stroke="none"/>
+              <circle cx="88" cy="53.5" r="3.4" fill="#f7b2ad"/><circle cx="88" cy="53.5" r="1.3" fill="#c95b5b" stroke="none"/>
+            </g>
+            <path d="M 20 43 C 17 45, 19 50, 25 49 C 46 39, 68 41, 86 50 C 91 51, 93 47, 89 43 C 71 27, 42 27, 20 43 Z" fill="#f2c2c6" stroke="#8f303b" stroke-width="1.15" stroke-linejoin="round"/>
+            <path d="M 24 42 C 22 44, 24 47, 29 46 C 47 37, 67 39, 82 47 C 86 48, 88 45, 85 42 C 69 29, 44 29, 24 42 Z" fill="#fff9f7"/>
+            <path d="M 49 32 L 59 32 L 61 66 L 51 66 Z" fill="#182018" stroke="#0f140f" stroke-width="1"/>
+            <path d="M 50 33 L 58 33 L 59 38 L 51 38 Z" fill="#2e3b2e" opacity="0.6"/>
           </svg>
         `
       },
@@ -1721,23 +1976,27 @@
         rimColor: '#e8c574',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#faf5f0" stroke="#e6d7c8" stroke-width="1"/>
-            <path d="M 24 46 Q 55 28 89 46" stroke="#e06d78" stroke-width="3.5" fill="none" opacity="0.85"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#fff9f5" stroke="#d9c2b4" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 22 47 C 28 37, 46 33, 76 38 C 83 41, 89 48, 93 57" stroke="#e86f7c" stroke-width="3.5" fill="none" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 30 39 Q 55 33 78 41" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.8"/>
           </svg>
         `
       },
-      {
+{
         id: 'madai',
         name: '참돔 초밥',
         plateColor: '#2b2a26',
         rimColor: '#fff0b8',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 50 Q 55 26 93 48 L 88 57 Q 55 38 24 57 Z" fill="#fff8f6" stroke="#e8cfc8" stroke-width="1"/>
-            <path d="M 22 44 Q 55 26 90 44" stroke="#c94a58" stroke-width="4" fill="none"/>
-            <circle cx="56" cy="35" r="3" fill="#6ab04c"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#fff7f5" stroke="#dbbab0" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 21 46 C 28 36, 46 32, 76 37 C 83 40, 89 48, 93 57" stroke="#c93b4b" stroke-width="3.8" fill="none" stroke-linecap="round"/>
+            <path d="M 32 37 L 39 45 M 46 35 L 53 44 M 61 36 L 68 45 M 75 40 L 81 49" stroke="#f2c2c6" stroke-width="1.5" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 29 38 L 34 42 M 43 35 L 48 39 M 58 35 L 63 40 M 72 38 L 77 43" stroke="#ffdbe0" stroke-width="1.3" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 28 38 Q 55 32 78 39" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round" opacity="0.75"/>
+            <ellipse cx="56" cy="33" rx="4" ry="2.8" fill="#6ab04c" stroke="#4d8b31" stroke-width="0.9"/>
           </svg>
         `
       },
@@ -1748,9 +2007,19 @@
         rimColor: '#bda460',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 19 50 Q 55 25 94 48 L 88 57 Q 55 38 24 57 Z" fill="#f2d0cc"/>
-            <path d="M 22 45 Q 55 26 88 45" stroke="#9e2a35" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+            <defs>
+              <linearGradient id="buriFleshGrad" x1="0%" y1="0%" x2="100%" y2="80%">
+                <stop offset="0%" stop-color="#e35d6a" />
+                <stop offset="50%" stop-color="#f08c96" />
+                <stop offset="100%" stop-color="#f7b5bc" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="url(#buriFleshGrad)" stroke="#c74854" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 21 46 C 28 36, 46 32, 76 37 C 83 40, 89 48, 93 57" stroke="#a81c2b" stroke-width="4" fill="none" stroke-linecap="round"/>
+            <line x1="38" y1="41" x2="46" y2="48" stroke="#ffd9de" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
+            <line x1="53" y1="39" x2="61" y2="47" stroke="#ffd9de" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
+            <line x1="68" y1="41" x2="76" y2="50" stroke="#ffd9de" stroke-width="1.6" stroke-linecap="round" opacity="0.75"/>
           </svg>
         `
       },
@@ -1761,30 +2030,16 @@
         rimColor: '#f4d58d',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 19 50 Q 55 26 93 48 L 88 56 Q 55 38 24 56 Z" fill="#b85d68"/>
-            <path d="M 22 45 Q 55 25 90 45" stroke="#7d8f9e" stroke-width="5" fill="none"/>
-            <circle cx="38" cy="40" r="1.3" fill="#2c353d"/>
-            <circle cx="48" cy="37" r="1.3" fill="#2c353d"/>
-            <circle cx="66" cy="37" r="1.3" fill="#2c353d"/>
-            <circle cx="76" cy="40" r="1.3" fill="#2c353d"/>
-            <circle cx="56" cy="34" r="4" fill="#f0d284"/>
-          </svg>
-        `
-      },
-      {
-        id: 'ika',
-        name: '오징어 초밥',
-        plateColor: '#91c1eb',
-        rimColor: '#ffffff',
-        svg: `
-          <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 22 48 Q 55 26 90 46 L 86 56 Q 55 38 26 56 Z" fill="#fcfcfc" stroke="#dcdcdc" stroke-width="1.5"/>
-            <line x1="38" y1="38" x2="42" y2="48" stroke="#e6e6e6" stroke-width="1.5"/>
-            <line x1="50" y1="36" x2="54" y2="46" stroke="#e6e6e6" stroke-width="1.5"/>
-            <line x1="62" y1="36" x2="66" y2="46" stroke="#e6e6e6" stroke-width="1.5"/>
-            <line x1="74" y1="38" x2="78" y2="48" stroke="#e6e6e6" stroke-width="1.5"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#bf5260" stroke="#9e3b47" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 21 46 C 28 36, 46 32, 76 37 C 83 40, 89 48, 93 57" stroke="#788c9e" stroke-width="4.8" fill="none" stroke-linecap="round"/>
+            <path d="M 24 44 C 32 35, 48 33, 76 38" stroke="#dce8f2" stroke-width="1.8" fill="none" stroke-linecap="round"/>
+            <circle cx="37" cy="39" r="1.4" fill="#232c33"/>
+            <circle cx="46" cy="36" r="1.4" fill="#232c33"/>
+            <circle cx="66" cy="36" r="1.4" fill="#232c33"/>
+            <circle cx="75" cy="39" r="1.4" fill="#232c33"/>
+            <ellipse cx="56" cy="32.5" rx="5" ry="3.2" fill="#f5d787" stroke="#d4b059" stroke-width="1"/>
+            <circle cx="56" cy="34" r="2" fill="#5ca33c"/>
           </svg>
         `
       },
@@ -1795,9 +2050,11 @@
         rimColor: '#dce6f2',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 49 Q 55 25 92 47 L 87 56 Q 55 38 25 56 Z" fill="#ffffff" stroke="#e0e0e0" stroke-width="1.2"/>
-            <circle cx="56" cy="35" r="3.5" fill="#6ab04c"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <circle cx="56" cy="39" r="4.5" fill="#78ba45" opacity="0.4"/>
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#fcfdff" stroke="#c8d2dc" stroke-width="1.2" opacity="0.95" stroke-linejoin="round"/>
+            <path d="M 30 37 Q 55 32 78 39" stroke="#ffffff" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="56" cy="33" rx="4" ry="2.8" fill="#6ab04c" stroke="#4d8b31" stroke-width="0.9"/>
           </svg>
         `
       },
@@ -1808,9 +2065,11 @@
         rimColor: '#f4d58d',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 50 Q 55 26 92 48 L 87 57 Q 55 38 25 57 Z" fill="#f7f5f0" stroke="#dfd9ce" stroke-width="1.2"/>
-            <path d="M 35 42 Q 55 34 77 42" stroke="#e8b4bc" stroke-width="2" fill="none"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#faf8f2" stroke="#cfc6b6" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 20 52 C 32 45, 58 43, 91 58" stroke="#d94b58" stroke-width="3.2" fill="none" stroke-linecap="round" opacity="0.85"/>
+            <path d="M 23 49 C 35 42, 58 41, 89 55" stroke="#f2949c" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.75"/>
+            <path d="M 30 37 Q 55 32 78 39" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.8"/>
           </svg>
         `
       },
@@ -1821,25 +2080,33 @@
         rimColor: '#e8c574',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 19 50 Q 55 26 93 48 L 88 56 Q 55 38 24 56 Z" fill="#a84a54"/>
-            <path d="M 22 44 Q 55 24 90 44" stroke="#455566" stroke-width="5" fill="none"/>
-            <circle cx="56" cy="34" r="3.8" fill="#6ab04c"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#ad4450" stroke="#8c303a" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 21 46 C 28 36, 46 32, 76 37 C 83 40, 89 48, 93 57" stroke="#3b4d5e" stroke-width="4.8" fill="none" stroke-linecap="round"/>
+            <path d="M 23 48 C 30 38, 47 34, 76 39 C 82 42, 88 49, 92 57" stroke="#c8d6e3" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <ellipse cx="56" cy="33" rx="4.2" ry="3" fill="#6ab04c" stroke="#4d8b31" stroke-width="0.9"/>
           </svg>
         `
       },
       {
         id: 'akagai',
-        name: '피조개 초밥',
+        name: '북방조개 초밥',
         plateColor: '#4d784a',
         rimColor: '#92b090',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 22 48 Q 42 26 57 34 Q 72 26 90 48 Q 74 56 57 50 Q 40 56 22 48 Z" fill="#d9654c" stroke="#b04128" stroke-width="1.5"/>
-            <line x1="42" y1="36" x2="45" y2="46" stroke="#b04128" stroke-width="1.5"/>
-            <line x1="57" y1="35" x2="57" y2="47" stroke="#b04128" stroke-width="1.5"/>
-            <line x1="72" y1="36" x2="69" y2="46" stroke="#b04128" stroke-width="1.5"/>
+            <defs>
+              <linearGradient id="akagaiGrad" x1="15%" y1="20%" x2="88%" y2="85%">
+                <stop offset="0%" stop-color="#fffcf7" />
+                <stop offset="38%" stop-color="#f7dfd4" />
+                <stop offset="68%" stop-color="#d94838" />
+                <stop offset="100%" stop-color="#8c1d14" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 24 46 C 22 36, 38 30, 56 33 C 74 36, 86 46, 90 58 C 91 61, 86 63, 81 60 C 71 54, 62 49, 46 49 C 34 49, 25 51, 24 46 Z" fill="url(#akagaiGrad)" stroke="#b5382a" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 32 39 C 48 36, 68 41, 82 54" stroke="#ffffff" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.55"/>
+            <path d="M 65 44 Q 76 50 84 58" stroke="#6e1109" stroke-width="1.3" fill="none" stroke-linecap="round" opacity="0.5"/>
           </svg>
         `
       },
@@ -1850,13 +2117,24 @@
         rimColor: '#bda460',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 20 48 Q 55 26 92 47 L 88 55 Q 55 38 24 55 Z" fill="#faf7f0" stroke="#dfd8c8" stroke-width="1.5"/>
-            <line x1="36" y1="39" x2="36" y2="48" stroke="#d4ccb8" stroke-width="1.5"/>
-            <line x1="46" y1="36" x2="46" y2="46" stroke="#d4ccb8" stroke-width="1.5"/>
-            <line x1="66" y1="36" x2="66" y2="46" stroke="#d4ccb8" stroke-width="1.5"/>
-            <line x1="76" y1="39" x2="76" y2="48" stroke="#d4ccb8" stroke-width="1.5"/>
-            <circle cx="56" cy="34" r="3.8" fill="#c92a2a"/>
+            <defs>
+              <linearGradient id="hamoRoastGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#d4914a" />
+                <stop offset="55%" stop-color="#f2d6ae" />
+                <stop offset="100%" stop-color="#fcf8f0" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 20 50 L 25 36 Q 52 32 75 39 L 94 52 L 87 60 L 70 48 Q 48 42 23 55 Z" fill="url(#hamoRoastGrad)" stroke="#bf8547" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 26 42 Q 52 36 73 43 L 89 54" stroke="#a65e1b" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.75"/>
+            <line x1="34" y1="36" x2="34" y2="46" stroke="#b57938" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="43" y1="35" x2="43" y2="45" stroke="#b57938" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="51" y1="35" x2="51" y2="45" stroke="#b57938" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="61" y1="36" x2="61" y2="46" stroke="#b57938" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="69" y1="38" x2="69" y2="48" stroke="#b57938" stroke-width="1.4" stroke-linecap="round"/>
+            <line x1="78" y1="42" x2="78" y2="52" stroke="#b57938" stroke-width="1.4" stroke-linecap="round"/>
+            <ellipse cx="56" cy="34" rx="5" ry="2.2" fill="#589e42" stroke="#3f782d" stroke-width="0.8"/>
+            <circle cx="56" cy="32.5" r="3.5" fill="#c92a2a" stroke="#961818" stroke-width="0.8"/>
           </svg>
         `
       },
@@ -1867,16 +2145,388 @@
         rimColor: '#dce6f2',
         svg: `
           <svg width="115" height="72" viewBox="0 0 115 72">
-            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" />
-            <path d="M 14 50 Q 55 26 98 48 L 92 55 Q 55 37 20 55 Z" fill="#eef2f5" stroke="#c5d1db" stroke-width="1.2"/>
-            <path d="M 18 47 Q 55 28 94 46" stroke="#a3b8c8" stroke-width="2.5" fill="none"/>
-            <circle cx="56" cy="35" r="3.8" fill="#589e42"/>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 15 55 C 19 43, 26 36, 34 34 C 48 31, 63 32, 77 36 C 85 39, 92 48, 97 60 C 90 59, 82 53, 74 49 C 60 44, 46 44, 32 48 C 24 50, 19 54, 15 55 Z" fill="#f2f6fa" stroke="#b8c7d6" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 19 48 C 26 37, 45 33, 77 38 C 84 41, 90 48, 95 57" stroke="#96b0c7" stroke-width="2.8" fill="none" stroke-linecap="round"/>
+            <path d="M 28 38 Q 55 32 78 39" stroke="#ffffff" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+            <ellipse cx="56" cy="33" rx="4.2" ry="2.8" fill="#589e42" stroke="#3f782d" stroke-width="0.9"/>
+          </svg>
+        `
+      },
+      {
+        id: 'inari',
+        name: '유부초밥',
+        shortPlaqueName: '유부',
+        plateColor: '#91c1eb',
+        rimColor: '#ffffff',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <defs>
+              <linearGradient id="inariGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stop-color="#eb9c42" />
+                <stop offset="65%" stop-color="#d48026" />
+                <stop offset="100%" stop-color="#b06212" />
+              </linearGradient>
+            </defs>
+            <rect x="26" y="33" width="29" height="31" rx="7" fill="url(#inariGrad)" stroke="#9c550e" stroke-width="1.2"/>
+            <path d="M 29 38 Q 40.5 42 52 38" stroke="#9c550e" stroke-width="1.2" fill="none"/>
+            <ellipse cx="40.5" cy="35.5" rx="9.5" ry="3" fill="#fffdf9" opacity="0.92"/>
+            <circle cx="38" cy="35.5" r="1.1" fill="#2b2623"/>
+            <circle cx="43" cy="36" r="1.1" fill="#e6b450"/>
+            <rect x="59" y="33" width="29" height="31" rx="7" fill="url(#inariGrad)" stroke="#9c550e" stroke-width="1.2"/>
+            <path d="M 62 38 Q 73.5 42 85 38" stroke="#9c550e" stroke-width="1.2" fill="none"/>
+            <ellipse cx="73.5" cy="35.5" rx="9.5" ry="3" fill="#fffdf9" opacity="0.92"/>
+            <circle cx="71" cy="36" r="1.1" fill="#2b2623"/>
+            <circle cx="76" cy="35" r="1.1" fill="#2b2623"/>
+          </svg>
+        `
+      },
+      {
+        id: 'mukeunji_hirame',
+        name: '묵은지 광어 초밥',
+        shortPlaqueName: '묵은지광어',
+        plateColor: '#850707',
+        rimColor: '#e8c574',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#f7f4eb" stroke="#cfc5b2" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 27 39 Q 56 26 84 40 L 81 46 Q 56 33 30 45 Z" fill="#e3b464" opacity="0.92" stroke="#bf8b36" stroke-width="1.15" stroke-linejoin="round"/>
+            <path d="M 29 42 Q 56 29.5 82 43" stroke="#f7e3b0" stroke-width="1.3" fill="none" opacity="0.8"/>
+            <ellipse cx="56" cy="31" rx="3.8" ry="2.6" fill="#6ab04c" stroke="#4d8b31" stroke-width="0.9"/>
+            <circle cx="53.8" cy="30.5" r="0.9" fill="#fff8e7"/>
+            <circle cx="58.2" cy="31" r="0.9" fill="#fff8e7"/>
+          </svg>
+        `
+      },
+      {
+        id: 'onion_mayo_salmon',
+        name: '양파마요 연어 초밥',
+        shortPlaqueName: '양파연어',
+        plateColor: '#d95f4e',
+        rimColor: '#f4d58d',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <defs>
+              <linearGradient id="onionSalmonGrad" x1="0%" y1="0%" x2="100%" y2="40%">
+                <stop offset="0%" stop-color="#ff8863" />
+                <stop offset="55%" stop-color="#ff6b42" />
+                <stop offset="100%" stop-color="#e8522a" />
+              </linearGradient>
+            </defs>
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="url(#onionSalmonGrad)" stroke="#d94e28" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 31 45 L 40 35 M 45 45 L 55 34 M 60 46 L 70 36 M 74 49 L 83 41" stroke="#ffb59e" stroke-width="2" stroke-linecap="round"/>
+            <path d="M 33 43 Q 42 30 49 42 Q 56 28 63 42 Q 70 30 79 43" stroke="#fffef8" stroke-width="3.2" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M 38 37 Q 56 25 74 37" stroke="#f0f4f8" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M 42 34 Q 56 22 70 34" stroke="#ffffff" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <circle cx="51" cy="32" r="1.6" fill="#4d8b31"/>
+            <circle cx="57" cy="30" r="1.8" fill="#5ca33c"/>
+            <circle cx="62" cy="33" r="1.5" fill="#4d8b31"/>
+          </svg>
+        `
+      },
+      {
+        id: 'salmon_steak',
+        name: '연어 스테이크 초밥',
+        shortPlaqueName: '연어스테이크',
+        plateColor: '#850707',
+        rimColor: '#e8c574',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#e07a52" stroke="#b85630" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 24 46 Q 55 32 88 50" stroke="#f29b76" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <line x1="37" y1="37" x2="42" y2="46" stroke="#4a2511" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="51" y1="35" x2="56" y2="44" stroke="#4a2511" stroke-width="2.2" stroke-linecap="round"/>
+            <line x1="65" y1="36" x2="70" y2="45" stroke="#4a2511" stroke-width="2.2" stroke-linecap="round"/>
+            <path d="M 39 37 Q 56 27 73 37" stroke="#fff9eb" stroke-width="2.2" fill="none" stroke-linecap="round"/>
+            <path d="M 42 39 Q 56 29 70 39" stroke="#3b1909" stroke-width="1.6" fill="none" stroke-linecap="round"/>
+            <circle cx="56" cy="32.5" r="2.6" fill="#5ca33c" stroke="#3f782d" stroke-width="0.8"/>
+          </svg>
+        `
+      },
+      {
+        id: 'soy_salmon',
+        name: '연어장 초밥',
+        shortPlaqueName: '연어장',
+        plateColor: '#850707',
+        rimColor: '#e8c574',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <rect x="30" y="44" width="52" height="22" rx="11" fill="#ffffff" stroke="#e2dcd3" stroke-width="1.15" />
+            <path d="M 17 54 C 21 43, 27 36, 34 34 C 48 31, 63 32, 76 36 C 84 39, 91 48, 95 60 C 89 59, 81 53, 74 49 C 60 44, 46 44, 32 48 C 25 50, 21 53, 17 54 Z" fill="#b84a27" stroke="#8f3315" stroke-width="1.2" stroke-linejoin="round"/>
+            <path d="M 26 45 Q 55 32 85 48" stroke="#d96b43" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.85"/>
+            <rect x="51" y="34" width="9" height="32" rx="1.5" fill="#1e241e" stroke="#0f140f" stroke-width="1"/>
+            <circle cx="55.5" cy="33" r="3.8" fill="#6ab04c" stroke="#4d8b31" stroke-width="0.9"/>
+            <circle cx="45" cy="39" r="1.2" fill="#fff5d6" opacity="0.8"/>
+            <circle cx="67" cy="40" r="1.2" fill="#fff5d6" opacity="0.8"/>
+          </svg>
+        `
+      },
+      {
+        id: 'king_prawn_tempura',
+        name: '왕새우튀김',
+        shortPlaqueName: '왕새우튀김',
+        plateColor: '#850707',
+        rimColor: '#e8c574',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <polygon points="80,50 96,42 93,49 98,53 81,55" fill="#c93b20" stroke="#9e2a13" stroke-width="1.1" stroke-linejoin="round"/>
+            <path d="M 24 44 C 15 46, 15 59, 25 60 C 44 61, 63 54, 82 55 C 85 55, 85 49, 81 48 C 63 45, 45 39, 24 44 Z" fill="#e09834" stroke="#b87314" stroke-width="1.2"/>
+            <polygon points="82,53 99,44 95,52 101,56 83,59" fill="#e0482d" stroke="#b53018" stroke-width="1.15" stroke-linejoin="round"/>
+            <path d="M 26 46 C 14 49, 14 64, 27 64 C 46 64, 65 57, 84 59 C 87 59, 87 52, 83 51 C 65 47, 46 41, 26 46 Z" fill="#f7bd52" stroke="#cc841b" stroke-width="1.2"/>
+            <path d="M 23 52 Q 42 46 62 50" stroke="#ffe299" stroke-width="2.2" fill="none" stroke-linecap="round" opacity="0.85"/>
+            <circle cx="26" cy="56" r="2.6" fill="#ffe299" opacity="0.85"/>
+            <circle cx="38" cy="53" r="2.4" fill="#ffe299" opacity="0.85"/>
+            <circle cx="51" cy="52" r="2.2" fill="#ffe299" opacity="0.85"/>
+            <circle cx="64" cy="53" r="2" fill="#ffe299" opacity="0.85"/>
+            <circle cx="74" cy="55" r="1.7" fill="#ffe299" opacity="0.85"/>
+            <ellipse cx="48" cy="61.5" rx="13.5" ry="5" fill="#fffdf7" stroke="#d9d0be" stroke-width="1.1"/>
+            <circle cx="44.5" cy="61" r="1.2" fill="#4d8b31"/>
+            <circle cx="51" cy="62" r="1.2" fill="#5ca33c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'mero_gui',
+        name: '메로구이',
+        shortPlaqueName: '메로구이',
+        plateColor: '#2b2a26',
+        rimColor: '#fff0b8',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <defs>
+              <linearGradient id="meroTopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stop-color="#fae0b8" />
+                <stop offset="55%" stop-color="#e8ac61" />
+                <stop offset="100%" stop-color="#c97d2e" />
+              </linearGradient>
+            </defs>
+            <g transform="translate(0, 4)">
+              <path d="M 22 44 L 22 53 Q 36 55 47 57 Q 56 62 64 65 Q 71 66 74 60 L 74 51 Z" fill="#fffdf9" stroke="#cfa063" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M 24 49 Q 36 51 47 53 Q 56 58 64 61 Q 70 62 73 57" stroke="#edd5b4" stroke-width="1.3" fill="none" stroke-linecap="round"/>
+              <path d="M 22 44 C 26 30, 58 27, 71 36 C 76 40, 76 48, 74 52 C 71 56, 66 56, 63 54 Q 55 49 47 46 Q 35 45 22 44 Z" fill="url(#meroTopGrad)" stroke="#a6601b" stroke-width="1.2" stroke-linejoin="round"/>
+              <path d="M 26 42 C 32 33, 55 31, 68 38" stroke="#b86b1f" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.6"/>
+              <path d="M 32 41 Q 46 36 58 41 Q 48 44 35 42 Z" fill="#fffaf0" opacity="0.65"/>
+              <path d="M 52 35 Q 63 40 67 51" stroke="#fffdf7" stroke-width="2" fill="none" stroke-linecap="round" opacity="0.75"/>
+              <path d="M 43 37 Q 54 41 58 49" stroke="#fffdf7" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.7"/>
+              <path d="M 34 39 Q 44 42 48 45" stroke="#fffdf7" stroke-width="1.6" fill="none" stroke-linecap="round" opacity="0.65"/>
+              <g filter="drop-shadow(-2px 2px 2px rgba(0,0,0,0.3))">
+                <path d="M 67 63 C 78 64, 86 55, 80 44 L 67 63 Z" fill="#ffd60a" stroke="#d99b00" stroke-width="1.2" stroke-linejoin="round"/>
+                <path d="M 69 61.5 C 76.5 62, 82.5 55, 78.5 46.5 Z" fill="#fff7a8"/>
+                <line x1="74" y1="54" x2="78.5" y2="52" stroke="#ffd60a" stroke-width="1.1" stroke-linecap="round"/>
+                <line x1="74" y1="54" x2="77.5" y2="57.5" stroke="#ffd60a" stroke-width="1.1" stroke-linecap="round"/>
+              </g>
+            </g>
+          </svg>
+        `
+      },
+      {
+        id: 'squid_ring',
+        name: '오징어 튀김',
+        shortPlaqueName: '오징어튀김',
+        plateColor: '#4d784a',
+        rimColor: '#92b090',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <g transform="rotate(-24 38 48)">
+              <ellipse cx="38" cy="50.5" rx="15" ry="8.2" fill="none" stroke="#a8660f" stroke-width="6"/>
+              <ellipse cx="38" cy="48" rx="15" ry="8.2" fill="none" stroke="#de922b" stroke-width="6"/>
+              <ellipse cx="38" cy="48" rx="12.2" ry="5.8" fill="none" stroke="#fffdf7" stroke-width="1.2" opacity="0.8"/>
+            </g>
+            <g transform="rotate(-24 56 49)">
+              <ellipse cx="56" cy="51.5" rx="15.5" ry="8.5" fill="none" stroke="#b87314" stroke-width="6.2"/>
+              <ellipse cx="56" cy="49" rx="15.5" ry="8.5" fill="none" stroke="#eb9f36" stroke-width="6.2"/>
+              <ellipse cx="56" cy="49" rx="12.6" ry="6" fill="none" stroke="#fffdf7" stroke-width="1.3" opacity="0.85"/>
+              <circle cx="48" cy="44" r="1.4" fill="#ffe299"/>
+              <circle cx="61" cy="42" r="1.4" fill="#ffe299"/>
+            </g>
+            <g transform="rotate(-24 74 50)">
+              <ellipse cx="74" cy="52.5" rx="16" ry="8.8" fill="none" stroke="#c47d1a" stroke-width="6.5"/>
+              <ellipse cx="74" cy="50" rx="16" ry="8.8" fill="none" stroke="#f7bd52" stroke-width="6.5"/>
+              <ellipse cx="74" cy="50" rx="13" ry="6.2" fill="none" stroke="#fffdf7" stroke-width="1.4" opacity="0.9"/>
+              <circle cx="63" cy="45" r="1.5" fill="#ffe299"/>
+              <circle cx="77" cy="42" r="1.6" fill="#ffe299"/>
+              <circle cx="85" cy="53" r="1.4" fill="#ffe299"/>
+            </g>
+            <ellipse cx="45" cy="61.5" rx="13.5" ry="5" fill="#fffdf7" stroke="#d9d0be" stroke-width="1.1"/>
+            <circle cx="41.5" cy="61" r="1.2" fill="#4d8b31"/>
+            <circle cx="48" cy="62" r="1.2" fill="#5ca33c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'korokke',
+        name: '고로케',
+        shortPlaqueName: '고로케',
+        plateColor: '#4d784a',
+        rimColor: '#92b090',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <g transform="rotate(-20 43 49)">
+              <ellipse cx="43" cy="53" rx="23.5" ry="14" fill="#b36214"/>
+              <ellipse cx="43" cy="48.5" rx="23.5" ry="14" fill="#de872c" stroke="#9e520b" stroke-width="1.2"/>
+              <circle cx="34" cy="45" r="1.8" fill="#f5b864" opacity="0.75"/>
+              <circle cx="46" cy="42" r="1.7" fill="#f5b864" opacity="0.75"/>
+              <circle cx="53" cy="48" r="1.6" fill="#f5b864" opacity="0.75"/>
+            </g>
+            <g transform="rotate(-20 70 51)">
+              <ellipse cx="70" cy="55" rx="24" ry="14.5" fill="#ba6818"/>
+              <ellipse cx="70" cy="50.5" rx="24" ry="14.5" fill="#eda647" stroke="#ad5c10" stroke-width="1.2"/>
+              <circle cx="58" cy="48" r="1.9" fill="#ffd285" opacity="0.85"/>
+              <circle cx="70" cy="44" r="1.8" fill="#ffd285" opacity="0.85"/>
+              <circle cx="79" cy="52" r="1.9" fill="#ffd285" opacity="0.85"/>
+              <path d="M 55 51 Q 63 41 68 53 Q 74 42 79 54 Q 84 46 87 52" stroke="#4a1e0b" stroke-width="2.6" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+              <circle cx="66" cy="47" r="1.6" fill="#5ca33c"/>
+              <circle cx="74" cy="50" r="1.5" fill="#4d8b31"/>
+            </g>
+          </svg>
+        `
+      },
+      {
+        id: 'takoyaki',
+        name: '타코야끼',
+        shortPlaqueName: '타코야끼',
+        plateColor: '#4d784a',
+        rimColor: '#92b090',
+        svg: `
+          <svg width="115" height="72" viewBox="0 0 115 72">
+            <defs>
+              <radialGradient id="takoBallGrad" cx="38%" cy="35%" r="62%">
+                <stop offset="0%" stop-color="#f7c66d" />
+                <stop offset="65%" stop-color="#d98a36" />
+                <stop offset="100%" stop-color="#9e5411" />
+              </radialGradient>
+            </defs>
+            <circle cx="37" cy="54" r="11" fill="url(#takoBallGrad)" stroke="#8c460a" stroke-width="1.2"/>
+            <path d="M 29 52 C 31 46, 41 46, 43 52 C 40 54, 32 54, 29 52 Z" fill="#4a1e0b" opacity="0.85"/>
+            <circle cx="57" cy="56" r="11" fill="url(#takoBallGrad)" stroke="#8c460a" stroke-width="1.2"/>
+            <path d="M 49 54 C 51 48, 61 48, 63 54 C 60 56, 52 56, 49 54 Z" fill="#4a1e0b" opacity="0.85"/>
+            <circle cx="77" cy="54" r="11" fill="url(#takoBallGrad)" stroke="#8c460a" stroke-width="1.2"/>
+            <path d="M 69 52 C 71 46, 81 46, 83 52 C 80 54, 72 54, 69 52 Z" fill="#4a1e0b" opacity="0.85"/>
+            <circle cx="47" cy="39" r="11" fill="url(#takoBallGrad)" stroke="#8c460a" stroke-width="1.2"/>
+            <path d="M 40 37 C 42 30, 50 30, 52 37 C 50 39, 42 39, 40 37 Z" fill="#4a1e0b" opacity="0.9"/>
+            <circle cx="67" cy="39" r="11" fill="url(#takoBallGrad)" stroke="#8c460a" stroke-width="1.2"/>
+            <path d="M 60 37 C 62 30, 70 30, 72 37 C 70 39, 62 39, 60 37 Z" fill="#4a1e0b" opacity="0.9"/>
+            <path d="M 28 53 Q 37 42 43 53 Q 52 35 61 53 Q 69 42 77 52 Q 83 45 86 50" stroke="#fffef8" stroke-width="1.8" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
+            <path d="M 40 38 Q 47 30 51 39 Q 58 29 65 38" stroke="#fffef8" stroke-width="1.7" fill="none" stroke-linecap="round" stroke-linejoin="round" opacity="0.92"/>
+            <path d="M 44 26 Q 49 22 53 27" stroke="#d49b63" stroke-width="1.8" fill="none" stroke-linecap="round" opacity="0.9"/>
+            <path d="M 59 27 Q 63 22 67 27" stroke="#e6b685" stroke-width="1.7" fill="none" stroke-linecap="round" opacity="0.9"/>
+            <circle cx="49" cy="34" r="1.1" fill="#3d7a22"/>
+            <circle cx="62" cy="35" r="1" fill="#4d8b31"/>
+            <circle cx="36" cy="48" r="1.1" fill="#3d7a22"/>
+            <circle cx="75" cy="46" r="1" fill="#4d8b31"/>
           </svg>
         `
       }
     ];
 
-    function getPlatePrice(plateData) {
+    const MEAL_MENU = [
+      {
+        id: 'udon',
+        name: '우동',
+        isMeal: true,
+        hasSteam: true,
+        price: 4500,
+        plateColor: '#78597d',
+        rimColor: '#bda460',
+        svg: `
+          <svg width="125" height="90" viewBox="0 0 125 90">
+            <defs>
+              <radialGradient id="udonBrothGrad" cx="45%" cy="45%" r="58%">
+                <stop offset="0%" stop-color="#e8a558" stop-opacity="0.72" />
+                <stop offset="70%" stop-color="#c47425" stop-opacity="0.82" />
+                <stop offset="100%" stop-color="#87460c" stop-opacity="0.9" />
+              </radialGradient>
+            </defs>
+            <ellipse cx="62.5" cy="82" rx="36" ry="6" fill="rgba(0,0,0,0.45)" />
+            <path d="M 40 72 L 43 80 C 43 84, 82 84, 82 80 L 85 72 Z" fill="#1a1412" />
+            <path d="M 16 32 C 16 66, 36 76, 62.5 76 C 89 76, 109 66, 109 32 Z" fill="#241c19" stroke="#3d2f2a" stroke-width="1.5"/>
+            <path d="M 24 50 Q 62.5 58 101 50" stroke="#c89d54" stroke-width="2" fill="none" opacity="0.7"/>
+            <ellipse cx="62.5" cy="32" rx="46.5" ry="14" fill="#9e2a1b" stroke="#241c19" stroke-width="2.5"/>
+            <ellipse cx="62.5" cy="33" rx="43.5" ry="11.8" fill="#471a0a"/>
+            <path d="M 33 36 Q 52 43 78 35" stroke="#ebd9b5" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.55"/>
+            <path d="M 42 32 Q 62 24 85 33" stroke="#ebd9b5" stroke-width="4.5" fill="none" stroke-linecap="round" opacity="0.55"/>
+            <ellipse cx="62.5" cy="33" rx="43" ry="11.5" fill="url(#udonBrothGrad)"/>
+            <path d="M 36 34 Q 50 26 64 35 Q 76 40 86 32" stroke="#fffdf7" stroke-width="4.2" fill="none" stroke-linecap="round" opacity="0.92"/>
+            <path d="M 40 38 Q 56 30 72 38" stroke="#faf5e8" stroke-width="4.2" fill="none" stroke-linecap="round" opacity="0.88"/>
+            <path d="M 38 30 A 10 7 0 0 1 56 30 Z" fill="#ffffff" stroke="#ff758f" stroke-width="2"/>
+            <polygon points="66,26 82,28 79,36 63,34" fill="#d98a36" stroke="#ad681b" stroke-width="1"/>
+            <circle cx="54" cy="35" r="2.5" fill="#4d8b31"/>
+            <circle cx="61" cy="33" r="2.5" fill="#5ca33c"/>
+          </svg>
+        `
+      },
+      {
+        id: 'soba',
+        name: '소바',
+        isMeal: true,
+        hasSteam: false,
+        price: 4500,
+        plateColor: '#78597d',
+        rimColor: '#bda460',
+        svg: `
+          <svg width="125" height="90" viewBox="0 0 125 90">
+            <defs>
+              <radialGradient id="sobaBrothGrad" cx="45%" cy="45%" r="58%">
+                <stop offset="0%" stop-color="#7a4928" stop-opacity="0.72" />
+                <stop offset="70%" stop-color="#4a2a16" stop-opacity="0.82" />
+                <stop offset="100%" stop-color="#29150a" stop-opacity="0.9" />
+              </radialGradient>
+            </defs>
+            <ellipse cx="62.5" cy="82" rx="44" ry="6" fill="rgba(0,0,0,0.45)" />
+            <path d="M 38 72 L 41 80 C 41 84, 84 84, 84 80 L 87 72 Z" fill="#1d2d44" />
+            <path d="M 16 32 C 16 66, 36 76, 62.5 76 C 89 76, 109 66, 109 32 Z" fill="#2b4162" stroke="#1d2d44" stroke-width="1.5"/>
+            <path d="M 22 48 Q 62.5 56 103 48" stroke="#dce6f2" stroke-width="1.8" fill="none" opacity="0.6"/>
+            <ellipse cx="62.5" cy="32" rx="46.5" ry="14" fill="#dce6f2" stroke="#2b4162" stroke-width="2.5"/>
+            <ellipse cx="62.5" cy="33" rx="43.5" ry="11.8" fill="#1f140e"/>
+            <path d="M 35 36 Q 58 43 84 35" stroke="#756857" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.55"/>
+            <ellipse cx="62.5" cy="33" rx="43" ry="11.5" fill="url(#sobaBrothGrad)"/>
+            <path d="M 38 34 Q 55 24 72 34 Q 82 38 88 32" stroke="#b5a690" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.92"/>
+            <path d="M 42 37 Q 58 27 76 37" stroke="#c7b8a6" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9"/>
+            <path d="M 46 31 Q 62 23 78 32" stroke="#a3937d" stroke-width="3" fill="none" stroke-linecap="round" opacity="0.9"/>
+            <ellipse cx="60" cy="31" rx="8" ry="4.5" fill="#ffffff" opacity="0.92"/>
+            <rect x="57" y="27" width="6" height="4" fill="#181f18" transform="rotate(-12 57 27)"/>
+            <polygon points="36,33 42,31 44,35 38,37" fill="#e0f2fe" opacity="0.8"/>
+            <polygon points="78,34 84,32 85,36 79,38" fill="#e0f2fe" opacity="0.8"/>
+            <circle cx="52" cy="34" r="2" fill="#5ca33c"/>
+            <circle cx="67" cy="34" r="2" fill="#4d8b31"/>
+          </svg>
+        `
+      },
+      {
+        id: 'ramen',
+        name: '라멘',
+        isMeal: true,
+        hasSteam: true,
+        price: 5000,
+        plateColor: '#2b2a26',
+        rimColor: '#fff0b8',
+        svg: `
+          <svg width="125" height="90" viewBox="0 0 125 90">
+            <ellipse cx="62.5" cy="82" rx="36" ry="6" fill="rgba(0,0,0,0.45)" />
+            <path d="M 40 72 L 43 80 C 43 84, 82 84, 82 80 L 85 72 Z" fill="#6e1d14" />
+            <path d="M 16 32 C 16 66, 36 76, 62.5 76 C 89 76, 109 66, 109 32 Z" fill="#9e2a1b" stroke="#5c160e" stroke-width="1.5"/>
+            <ellipse cx="62.5" cy="32" rx="46.5" ry="14" fill="#1e1b18" stroke="#e8c574" stroke-width="2"/>
+            <ellipse cx="62.5" cy="33" rx="43" ry="11.5" fill="#d99b52"/>
+            <polygon points="68,14 82,12 85,31 70,32" fill="#182018" stroke="#0d120d" stroke-width="1"/>
+            <polygon points="78,16 92,15 93,33 80,33" fill="#1f291f" stroke="#0d120d" stroke-width="1"/>
+            <path d="M 38 35 Q 55 28 72 36" stroke="#ffd23f" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <path d="M 42 38 Q 58 31 76 39" stroke="#f5c024" stroke-width="3" fill="none" stroke-linecap="round"/>
+            <ellipse cx="45" cy="33" rx="12" ry="6.5" fill="#b86b52" stroke="#7a3b26" stroke-width="1.8"/>
+            <path d="M 39 33 A 6 3 0 0 1 51 33" stroke="#e6b8a2" stroke-width="1.5" fill="none"/>
+            <ellipse cx="66" cy="33" rx="8" ry="5" fill="#fffdf7" stroke="#d4a359" stroke-width="1.2"/>
+            <ellipse cx="66" cy="33" rx="4.5" ry="3" fill="#ff7b00"/>
+            <circle cx="56" cy="37" r="2.2" fill="#4d8b31"/>
+            <circle cx="60" cy="39" r="2" fill="#5ca33c"/>
+          </svg>
+        `
+      }
+    ];
+
+function getPlatePrice(plateData) {
+      if (plateData.price) return plateData.price; 
       const colorPriceMap = {
         '#91c1eb': 2000,
         '#305991': 2500,
@@ -1894,10 +2544,15 @@
       'soy_shrimp',
       'tako_wasabi',
       'ikura',
-      'scallop',
-      'scallop_adductor',
       'unagi'
     ];
+
+    const EXCLUDED_FROM_SPECIAL_IDS = new Set([
+      'king_prawn_tempura',
+      'mero_gui',
+      'squid_ring',
+      'korokke'
+    ]);
 
     function shuffleArray(array) {
       const arr = [...array];
@@ -1908,11 +2563,16 @@
       return arr;
     }
 
-    const specialCandidates = SUSHI_MENU.filter(item => TODAY_SPECIAL_IDS.includes(item.id));
+    const specialCandidates = SUSHI_MENU.filter(
+      item => TODAY_SPECIAL_IDS.includes(item.id) && !EXCLUDED_FROM_SPECIAL_IDS.has(item.id)
+    );
     const pickedFromSpecial2 = shuffleArray(specialCandidates).slice(0, 2);
 
-const otherCandidates = SUSHI_MENU.filter(
-      item => !TODAY_SPECIAL_IDS.includes(item.id) && getPlatePrice(item) >= 4500
+    const otherCandidates = SUSHI_MENU.filter(
+      item =>
+        !TODAY_SPECIAL_IDS.includes(item.id) &&
+        !EXCLUDED_FROM_SPECIAL_IDS.has(item.id) &&
+        getPlatePrice(item) >= 4500
     );
     const pickedFromOthers2 = shuffleArray(otherCandidates).slice(0, 2);
 
@@ -1951,6 +2611,58 @@ const otherCandidates = SUSHI_MENU.filter(
           <path d="M 8 15 C 12 28, 36 30, 70 30 C 104 30, 128 28, 132 15 Z" fill="${plateColor}" filter="brightness(0.82)" />
           <ellipse cx="70" cy="15" rx="62" ry="11.5" fill="${plateColor}" stroke="${rimColor}" stroke-width="2.2" />
           <ellipse cx="70" cy="16" rx="45" ry="7.5" fill="${plateColor}" filter="brightness(0.92)" stroke="${rimColor}" stroke-width="0.9" opacity="0.85" />
+        </svg>
+      `;
+    }
+
+    function createEmptyBowlSVG(mealId) {
+      let footColor = '#1a1412';
+      let bodyColor = '#241c19';
+      let bodyStroke = '#3d2f2a';
+      let fullStripeHtml = `<path d="M 24 38 Q 62.5 46 101 38" stroke="#c89d54" stroke-width="2" fill="none" opacity="0.7"/>`;
+      let nestedStripeHtml = `<path d="M 21 29 Q 62.5 37 104 29" stroke="#c89d54" stroke-width="2" fill="none" opacity="0.7"/>`;
+      let rimFill = '#9e2a1b';
+      let rimStroke = '#241c19';
+      let innerWell = '#5e180f';
+
+      if (mealId === 'soba') {
+        footColor = '#1d2d44';
+        bodyColor = '#2b4162';
+        bodyStroke = '#1d2d44';
+        fullStripeHtml = `<path d="M 22 36 Q 62.5 44 103 36" stroke="#dce6f2" stroke-width="1.8" fill="none" opacity="0.6"/>`;
+        nestedStripeHtml = `<path d="M 20 28 Q 62.5 36 105 28" stroke="#dce6f2" stroke-width="1.8" fill="none" opacity="0.6"/>`;
+        rimFill = '#dce6f2';
+        rimStroke = '#2b4162';
+        innerWell = '#aebbd0';
+      } else if (mealId === 'ramen') {
+        footColor = '#6e1d14';
+        bodyColor = '#9e2a1b';
+        bodyStroke = '#5c160e';
+        fullStripeHtml = `<path d="M 24 38 Q 62.5 46 101 38" stroke="#e8c574" stroke-width="1.5" fill="none" opacity="0.55"/>`;
+        nestedStripeHtml = `<path d="M 21 29 Q 62.5 37 104 29" stroke="#e8c574" stroke-width="1.5" fill="none" opacity="0.55"/>`;
+        rimFill = '#1e1b18';
+        rimStroke = '#e8c574';
+        innerWell = '#12100e';
+      }
+
+      return `
+        <svg width="100%" height="100%" viewBox="0 0 125 65">
+          <g class="bowl-full-shape">
+            <ellipse cx="62.5" cy="59" rx="34" ry="5" fill="rgba(0,0,0,0.38)" />
+            <path d="M 41 49 L 44 57 C 44 60, 81 60, 81 57 L 84 49 Z" fill="${footColor}" />
+            <path d="M 18 16 C 18 44, 36 53, 62.5 53 C 89 53, 107 44, 107 16 Z" fill="${bodyColor}" stroke="${bodyStroke}" stroke-width="1.5"/>
+            ${fullStripeHtml}
+          </g>
+
+          <g class="bowl-nested-shape" style="display: none;">
+            <path d="M 19 16 C 19 25, 20 31, 21.5 34.5 A 43.5 11 0 0 0 103.5 34.5 C 105 31, 106 25, 106 16 Z" fill="rgba(0,0,0,0.35)" />
+            <path d="M 18 16 C 18 23, 19.2 28.5, 21 32 A 43.5 10.8 0 0 0 104 32 C 105.8 28.5, 107 23, 107 16 Z" fill="${bodyColor}" stroke="${bodyStroke}" stroke-width="1.5"/>
+            ${nestedStripeHtml}
+          </g>
+
+          <ellipse cx="62.5" cy="16" rx="44.5" ry="11.5" fill="${rimFill}" stroke="${rimStroke}" stroke-width="2.2"/>
+          <ellipse cx="62.5" cy="18" rx="39" ry="8.5" fill="${innerWell}" />
+          <ellipse cx="62.5" cy="21" rx="28" ry="5.5" fill="#000000" opacity="0.35" />
         </svg>
       `;
     }
@@ -2278,42 +2990,6 @@ const RAIL_SPEED = 0.9;
       return candidate;
     }
 
-    function buildPlateElement(plateData) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'sushi-item';
-      if (isCurrentlyEating || isShopClosed) wrapper.classList.add('disabled-pick');
-
-      const label = document.createElement('div');
-      label.className = 'sushi-label';
-      if (plateData.isTodaySpecial) {
-        label.classList.add('today-special-label');
-        label.textContent = `[오늘의 특선] ${plateData.name}`;
-      } else {
-        label.textContent = plateData.name;
-      }
-      wrapper.appendChild(label);
-
-      const foodWrap = document.createElement('div');
-      foodWrap.className = 'food-visual-wrap';
-
-      if (plateData.isCustom) {
-        const img = document.createElement('img');
-        img.className = 'custom-sushi-img';
-        img.src = plateData.imageUrl;
-        foodWrap.appendChild(img);
-      } else {
-        foodWrap.innerHTML = plateData.svg;
-      }
-      wrapper.appendChild(foodWrap);
-
-      const plateBase = document.createElement('div');
-      plateBase.className = 'plate-base-wrap';
-      plateBase.innerHTML = createPerspectivePlateSVG(plateData.plateColor, plateData.rimColor);
-      wrapper.appendChild(plateBase);
-
-      return wrapper;
-    }
-
     let requestedOrderQueue = [];
 
     function createPlateDataFromMenu(chosen) {
@@ -2387,7 +3063,7 @@ const RAIL_SPEED = 0.9;
       return createPlateDataFromMenu(chosen);
     }
 
-    function buildPlateElement(plateData) {
+function buildPlateElement(plateData) {
       const wrapper = document.createElement('div');
       wrapper.className = 'sushi-item';
       if (isCurrentlyEating || isShopClosed) wrapper.classList.add('disabled-pick');
@@ -2413,6 +3089,25 @@ const RAIL_SPEED = 0.9;
       } else {
         foodWrap.innerHTML = plateData.svg;
       }
+
+      if (plateData.isMeal) {
+        foodWrap.style.marginBottom = '0px';
+
+        if (plateData.hasSteam) {
+          const steamWrap = document.createElement('div');
+          steamWrap.className = 'steam-wrap';
+          steamWrap.style.top = '-8px';
+          steamWrap.innerHTML = `
+            <div class="steam-line"></div>
+            <div class="steam-line"></div>
+          `;
+          foodWrap.appendChild(steamWrap);
+        }
+
+        wrapper.appendChild(foodWrap);
+        return wrapper;
+      }
+
       wrapper.appendChild(foodWrap);
 
       const plateBase = document.createElement('div');
@@ -2589,19 +3284,69 @@ function animateRail() {
       }
     }
 
+    let stackedSushiElements = [];
+    let stackedMealElements = [];
+
+    function relayoutPlateStack() {
+      const isSmallMobile = window.innerWidth <= 560;
+      const isMobile = window.innerWidth <= 900;
+
+      const plateGap = isSmallMobile ? 7 : (isMobile ? 7.8 : 8.5);
+      const bowlGap = isSmallMobile ? 13.5 : (isMobile ? 15 : 17.5);
+      const bowlSeatOffset = isSmallMobile ? 4 : (isMobile ? 5 : 6);
+
+      let currentBottom = 0;
+      let zOrder = 1;
+
+      stackedSushiElements.forEach((el) => {
+        plateStackWrapper.appendChild(el);
+        el.style.bottom = `${currentBottom}px`;
+        el.style.zIndex = zOrder++;
+        currentBottom += plateGap;
+      });
+
+      if (stackedSushiElements.length > 0) {
+        currentBottom += bowlSeatOffset;
+      }
+
+      stackedMealElements.forEach((el, idx) => {
+        plateStackWrapper.appendChild(el);
+        el.style.bottom = `${currentBottom}px`;
+        el.style.zIndex = 100 + idx;
+
+        const fullShape = el.querySelector('.bowl-full-shape');
+        const nestedShape = el.querySelector('.bowl-nested-shape');
+
+        if (fullShape && nestedShape) {
+          fullShape.style.display = idx === 0 ? 'block' : 'none';
+          nestedShape.style.display = idx > 0 ? 'block' : 'none';
+        }
+
+        currentBottom += bowlGap;
+      });
+    }
+
     function addPlateToStack(plateData) {
       eatenPlatesCount++;
       recordEatenMenu(plateData);
       stackCountBadge.textContent = `먹은 접시: ${eatenPlatesCount}접시`;
 
-      const visualIndex = Math.min(plateStackWrapper.children.length, MAX_PLATES_LIMIT - 1);
-      const plateWrap = document.createElement('div');
-      plateWrap.className = 'stacked-plate-svg';
-      plateWrap.style.bottom = `${visualIndex * 8.5}px`;
-      plateWrap.style.zIndex = eatenPlatesCount;
-      plateWrap.innerHTML = createPerspectivePlateSVG(plateData.plateColor, plateData.rimColor, 145, 36);
+      const totalStacked = stackedSushiElements.length + stackedMealElements.length;
+      if (totalStacked < MAX_PLATES_LIMIT) {
+        const itemWrap = document.createElement('div');
 
-      plateStackWrapper.appendChild(plateWrap);
+        if (plateData.isMeal) {
+          itemWrap.className = 'stacked-bowl-svg';
+          itemWrap.innerHTML = createEmptyBowlSVG(plateData.id);
+          stackedMealElements.push(itemWrap);
+        } else {
+          itemWrap.className = 'stacked-plate-svg';
+          itemWrap.innerHTML = createPerspectivePlateSVG(plateData.plateColor, plateData.rimColor, 145, 36);
+          stackedSushiElements.push(itemWrap);
+        }
+
+        relayoutPlateStack();
+      }
 
       if (eatenPlatesCount >= MAX_PLATES_LIMIT) {
         isShopClosed = true;
@@ -2949,6 +3694,8 @@ resetShopBtn.addEventListener('click', () => {
       eatenPlatesCount = 0;
       eatenHistoryMap.clear();
       isShopClosed = false;
+      stackedSushiElements = [];
+      stackedMealElements = [];
       plateStackWrapper.innerHTML = '';
       stackCountBadge.textContent = '먹은 접시: 0접시';
       
@@ -3026,37 +3773,19 @@ resetShopBtn.addEventListener('click', () => {
       orderKioskGrid.innerHTML = '';
       selectedOrderItem = null;
       submitOrderBtn.disabled = true;
-      submitOrderBtn.textContent = '초밥을 선택해 주세요';
+      submitOrderBtn.textContent = '메뉴를 선택해 주세요';
 
-      const kioskList = [
-        ...SUSHI_MENU.map(item => ({
-          ...item,
-          isCustomItem: false,
-          price: getPlatePrice(item),
-          isSpecial: pickedSpecialIds.has(item.id)
-        })),
-        ...customImagesList.map((img, idx) => ({
-          id: `custom_${img.id}`,
-          isCustomItem: true,
-          customId: img.id,
-          name: `스페셜 초밥 #${idx + 1}`,
-          imageUrl: img.dataUrl,
-          plateColor: '#bda460',
-          rimColor: '#fff5cc',
-          price: 5500,
-          isSpecial: true
-        }))
-      ];
+      const lightPlateColors = new Set(['#91c1eb', '#bda460']);
 
-      kioskList.forEach(menu => {
+      function createKioskCard(menu) {
         const card = document.createElement('div');
         card.className = 'kiosk-menu-item';
 
         if (menu.isSpecial) {
-          const badge = document.createElement('span');
-          badge.className = 'kiosk-special-badge';
-          badge.textContent = menu.isCustomItem ? '스페셜' : '오늘의특선';
-          card.appendChild(badge);
+          const specialBadge = document.createElement('span');
+          specialBadge.className = 'kiosk-special-badge';
+          specialBadge.textContent = menu.isCustomItem ? '스페셜' : '오늘의특선';
+          card.appendChild(specialBadge);
         }
 
         const visualBox = document.createElement('div');
@@ -3075,11 +3804,6 @@ resetShopBtn.addEventListener('click', () => {
         nameEl.textContent = menu.name;
         card.appendChild(nameEl);
 
-        const priceEl = document.createElement('div');
-        priceEl.className = 'kiosk-menu-price';
-        priceEl.textContent = formatCurrency(menu.price);
-        card.appendChild(priceEl);
-
         card.addEventListener('click', () => {
           orderKioskGrid.querySelectorAll('.kiosk-menu-item').forEach(el => {
             el.classList.remove('selected');
@@ -3087,11 +3811,129 @@ resetShopBtn.addEventListener('click', () => {
           card.classList.add('selected');
           selectedOrderItem = menu;
           submitOrderBtn.disabled = false;
-          submitOrderBtn.textContent = `[${menu.name}] 요청하기`;
+          submitOrderBtn.textContent = `[${menu.name}] 주문하기 (${formatCurrency(menu.price)})`;
         });
 
-        orderKioskGrid.appendChild(card);
+        return card;
+      }
+
+      function appendGroupSection({ badgeText, plateColor, rimColor, items }) {
+        const groupWrap = document.createElement('div');
+        groupWrap.className = 'kiosk-price-group';
+
+        const header = document.createElement('div');
+        header.className = 'kiosk-group-header';
+
+        const badge = document.createElement('div');
+        badge.className = 'kiosk-price-badge';
+        badge.style.backgroundColor = plateColor;
+        badge.style.border = `1.5px solid ${rimColor}`;
+        badge.style.color = lightPlateColors.has(plateColor) ? '#1e1610' : '#fffaf5';
+
+        const dot = document.createElement('span');
+        dot.className = 'kiosk-plate-dot';
+        dot.style.backgroundColor = plateColor;
+        dot.style.border = `2px solid ${rimColor}`;
+
+        const textSpan = document.createElement('span');
+        textSpan.textContent = badgeText;
+
+        badge.appendChild(dot);
+        badge.appendChild(textSpan);
+        header.appendChild(badge);
+        groupWrap.appendChild(header);
+
+        const itemsGrid = document.createElement('div');
+        itemsGrid.className = 'kiosk-group-items';
+
+        items.forEach(menu => {
+          itemsGrid.appendChild(createKioskCard(menu));
+        });
+
+        groupWrap.appendChild(itemsGrid);
+        orderKioskGrid.appendChild(groupWrap);
+      }
+
+      if (customImagesList.length > 0) {
+        const customItems = customImagesList.map((img, idx) => ({
+          id: `custom_${img.id}`,
+          isCustomItem: true,
+          customId: img.id,
+          name: `스페셜 초밥 #${idx + 1}`,
+          imageUrl: img.dataUrl,
+          plateColor: '#bda460',
+          rimColor: '#fff5cc',
+          price: 5500,
+          isSpecial: true
+        }));
+
+        appendGroupSection({
+          badgeText: `스페셜 (${formatCurrency(5500)})`,
+          plateColor: '#bda460',
+          rimColor: '#fff5cc',
+          items: customItems
+        });
+      }
+
+      const regularMenus = SUSHI_MENU.map(item => ({
+        ...item,
+        isCustomItem: false,
+        price: getPlatePrice(item),
+        isSpecial: pickedSpecialIds.has(item.id)
+      }));
+
+      const priceGroupsMap = new Map();
+      regularMenus.forEach(item => {
+        if (!priceGroupsMap.has(item.price)) {
+          priceGroupsMap.set(item.price, {
+            price: item.price,
+            plateColor: item.plateColor,
+            rimColor: item.rimColor,
+            items: []
+          });
+        }
+        priceGroupsMap.get(item.price).items.push(item);
       });
+
+      const sortedGroups = Array.from(priceGroupsMap.values()).sort((a, b) => a.price - b.price);
+
+      sortedGroups.forEach(group => {
+        group.items.sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+
+        appendGroupSection({
+          badgeText: formatCurrency(group.price),
+          plateColor: group.plateColor,
+          rimColor: group.rimColor,
+          items: group.items
+        });
+      });
+
+      const mealItems = MEAL_MENU.map(item => ({
+        ...item,
+        isCustomItem: false,
+        isSpecial: false
+      })).sort((a, b) => a.name.localeCompare(b.name, 'ko'));
+
+      appendGroupSection({
+        badgeText: '식사류',
+        plateColor: '#5c3a21',
+        rimColor: '#ebd095',
+        items: mealItems
+      });
+    }
+
+    function serveMealDirectly(mealData) {
+      isCurrentlyEating = true;
+      updateRailCursorState();
+
+      const displayClone = buildPlateElement(mealData);
+      displayClone.className = 'active-sushi-display';
+      eatingSlot.appendChild(displayClone);
+
+      const minTime = 6000;
+      const maxTime = 9000;
+      const eatDurationMs = Math.floor(Math.random() * (maxTime - minTime + 1)) + minTime;
+      startEatingProcess(mealData, displayClone, eatDurationMs);
     }
 
     openOrderModalBtn.addEventListener('click', () => {
@@ -3113,6 +3955,18 @@ resetShopBtn.addEventListener('click', () => {
 
     submitOrderBtn.addEventListener('click', () => {
       if (!selectedOrderItem) return;
+
+      if (selectedOrderItem.isMeal) {
+        if (isCurrentlyEating) {
+          showToast('아직 식사 중이에요! 다 드신 뒤에 식사류를 주문해 주세요.');
+          return;
+        }
+        orderModal.classList.remove('open');
+        serveMealDirectly(selectedOrderItem);
+        showToast(`주문하신 [${selectedOrderItem.name}] 나왔습니다! 맛있게 드세요.`);
+        return;
+      }
+
       enqueueRequestedSushi(selectedOrderItem);
       orderModal.classList.remove('open');
       showToast(`🔔 [${selectedOrderItem.name}] 주문 완료! 곧 레일 왼쪽에서 등장합니다.`);
