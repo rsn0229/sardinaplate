@@ -15,7 +15,7 @@
   <meta name="twitter:image" content="https://plate.sardina.love/thumb.png">
 
   <style>
-    :root {
+:root {
       --bg-wall: #281e1a;
       --wood-light: #d69f63;
       --wood-mid: #b57d43;
@@ -23,6 +23,8 @@
       --rail-bg: #2b2d2f;
       --rail-track: #222426;
       --accent: #e06d53;
+      --ui-scale: 1;
+      --menu-scale: 1;
     }
 
     * {
@@ -63,13 +65,14 @@
       z-index: 1;
     }
 
-    .menu-board {
+.menu-board {
       display: flex;
       gap: 14px;
       position: absolute;
-      top: 22px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%) scale(var(--menu-scale, 1));
+      transform-origin: center center;
       opacity: 0.82;
     }
 
@@ -99,8 +102,9 @@
       box-shadow: 0 6px 15px rgba(255, 200, 100, 0.25);
     }
 
-    .conveyor-section {
+.conveyor-section {
       height: 165px;
+      zoom: var(--ui-scale, 1);
       background: linear-gradient(180deg, #434649 0%, #2c2e30 25%, #1f2022 100%);
       position: relative;
       border-top: 5px solid #5a5d60;
@@ -253,6 +257,8 @@
       position: relative;
       padding-bottom: 8px;
       pointer-events: none;
+      transform: scale(var(--ui-scale, 1));
+      transform-origin: bottom center;
     }
 
     .stack-area-row {
@@ -307,7 +313,7 @@
       white-space: nowrap;
     }
 
-    .center-eating-zone {
+.center-eating-zone {
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -315,6 +321,8 @@
       position: relative;
       height: 100%;
       padding-bottom: 6px;
+      transform: scale(var(--ui-scale, 1));
+      transform-origin: bottom center;
     }
 
     .mat-stage {
@@ -473,14 +481,16 @@
       65% { transform: rotate(0.4deg); }
     }
 
-    .right-side-zone {
+.right-side-zone {
       height: 100%;
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      gap: 24px;
+      gap: 0; /* 💡 장국과 컵이 모바일처럼 겹치도록 간격 0으로 설정 */
       padding-bottom: 12px;
       position: relative;
+      transform: scale(var(--ui-scale, 1));
+      transform-origin: bottom center;
     }
 
     .side-vessel-wrap {
@@ -492,8 +502,15 @@
       transition: transform 0.3s ease, margin 0.3s ease;
     }
 
-    .miso-vessel { z-index: 3; }
-    .tea-vessel { z-index: 2; }
+    .miso-vessel {
+      z-index: 4;
+      transform: translate(-6px, 10px) scale(0.95);
+    }
+    .tea-vessel {
+      z-index: 2;
+      margin-left: -45px;
+      transform: translate(12px, -20px) scale(0.86);
+    }
 
     .steam-wrap {
       position: absolute;
@@ -830,14 +847,16 @@
       flex: 0.7;
     }
 
-    @media (max-width: 900px) {
+@media (max-width: 900px) {
       .wall-area {
         flex: 0.95;
       }
+
       .menu-board {
         top: auto;
-        bottom: 22px;
-        transform: translateX(-50%) scale(0.95);
+        bottom: 14px;
+        transform: translateX(-50%) scale(var(--menu-scale, 0.95));
+        transform-origin: bottom center;
       }
 
       .counter-table {
@@ -895,9 +914,10 @@
         flex: 1.05;
       }
       .menu-board {
-        bottom: 20px;
+        bottom: 12px;
         gap: 10px;
-        transform: translateX(-50%) scale(0.92);
+        transform: translateX(-50%) scale(var(--menu-scale, 0.92));
+        transform-origin: bottom center;
       }
       .top-right-controls { top: 12px; right: 12px; gap: 6px; }
       .checkout-btn { height: 36px; padding: 0 12px; font-size: 12px; }
@@ -3091,6 +3111,42 @@ resetShopBtn.addEventListener('click', () => {
       orderModal.classList.remove('open');
       showToast(`🔔 [${selectedOrderItem.name}] 주문 완료! 곧 레일 왼쪽에서 등장합니다.`);
     });
+
+    function updateWindowScale() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const isMobileLayout = w <= 900;
+
+      let uiScale = 1;
+      if (!isMobileLayout) {
+        const scaleW = w / 920;
+        const scaleH = h / 600;
+        uiScale = Math.max(1, Math.min(Math.min(scaleW, scaleH), 2.2));
+      }
+      document.documentElement.style.setProperty('--ui-scale', uiScale.toFixed(3));
+
+      const wallEl = document.querySelector('.wall-area');
+      if (wallEl) {
+        const wallHeight = wallEl.clientHeight;
+        const plaqueBaseHeight = 118; 
+
+        if (isMobileLayout) {
+          const safeWallHeight = Math.max(40, wallHeight - 68);
+          const maxMobileScale = safeWallHeight / plaqueBaseHeight;
+          const baseMobileTarget = w <= 560 ? 0.92 : 0.95;
+          const finalMenuScale = Math.max(0.45, Math.min(baseMobileTarget, maxMobileScale));
+          document.documentElement.style.setProperty('--menu-scale', finalMenuScale.toFixed(3));
+        } else {
+          const maxPcScale = (wallHeight * 0.74) / plaqueBaseHeight;
+          const finalMenuScale = Math.max(0.55, Math.min(uiScale, maxPcScale));
+          document.documentElement.style.setProperty('--menu-scale', finalMenuScale.toFixed(3));
+        }
+      }
+    }
+
+    window.addEventListener('resize', updateWindowScale);
+    window.addEventListener('DOMContentLoaded', () => requestAnimationFrame(updateWindowScale));
+    updateWindowScale();
   </script>
 </body>
 </html>
