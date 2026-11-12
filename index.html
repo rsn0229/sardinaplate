@@ -15,7 +15,7 @@
   <meta name="twitter:image" content="https://plate.sardina.love/thumb.png">
 
   <style>
-    :root {
+:root {
       --bg-wall: #281e1a;
       --wood-light: #d69f63;
       --wood-mid: #b57d43;
@@ -23,6 +23,8 @@
       --rail-bg: #2b2d2f;
       --rail-track: #222426;
       --accent: #e06d53;
+      --ui-scale: 1;
+      --menu-scale: 1;
     }
 
     * {
@@ -63,13 +65,14 @@
       z-index: 1;
     }
 
-    .menu-board {
+.menu-board {
       display: flex;
       gap: 14px;
       position: absolute;
-      top: 22px;
+      top: 50%;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translate(-50%, -50%) scale(var(--menu-scale, 1));
+      transform-origin: center center;
       opacity: 0.82;
     }
 
@@ -99,8 +102,8 @@
       box-shadow: 0 6px 15px rgba(255, 200, 100, 0.25);
     }
 
-    .conveyor-section {
-      height: 165px;
+.conveyor-section {
+      height: calc(165px * var(--ui-scale, 1));
       background: linear-gradient(180deg, #434649 0%, #2c2e30 25%, #1f2022 100%);
       position: relative;
       border-top: 5px solid #5a5d60;
@@ -114,10 +117,10 @@
 
     .rail-belt {
       position: absolute;
-      bottom: 16px;
+      bottom: calc(16px * var(--ui-scale, 1));
       left: 0;
       width: 100%;
-      height: 58px;
+      height: calc(58px * var(--ui-scale, 1));
       background: repeating-linear-gradient(
         90deg,
         #2b2d30 0px,
@@ -140,7 +143,7 @@
 
     .sushi-item {
       position: absolute;
-      bottom: 22px;
+      bottom: calc(22px * var(--ui-scale, 1));
       width: 150px;
       height: 135px;
       cursor: pointer;
@@ -148,12 +151,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
+      transform: scale(var(--ui-scale, 1));
+      transform-origin: bottom left;
       transition: transform 0.2s cubic-bezier(0.2, 0.8, 0.2, 1), filter 0.2s;
       will-change: left, transform;
     }
 
     .sushi-item:hover {
-      transform: translateY(-6px) scale(1.05);
+      transform: translateY(-6px) scale(calc(var(--ui-scale, 1) * 1.05));
       filter: drop-shadow(0 8px 14px rgba(255, 220, 160, 0.4));
       z-index: 50;
     }
@@ -163,7 +168,7 @@
     }
 
     .sushi-item.disabled-pick:hover {
-      transform: none;
+      transform: scale(var(--ui-scale, 1));
       filter: none;
     }
 
@@ -245,7 +250,7 @@
     }
 
 .left-stack-zone {
-      height: 100%;
+      height: auto;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -253,6 +258,8 @@
       position: relative;
       padding-bottom: 8px;
       pointer-events: none;
+      transform: scale(var(--ui-scale, 1));
+      transform-origin: bottom center;
     }
 
     .stack-area-row {
@@ -307,14 +314,17 @@
       white-space: nowrap;
     }
 
-    .center-eating-zone {
+.center-eating-zone {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: flex-end;
       position: relative;
-      height: 100%;
+      height: auto;
       padding-bottom: 6px;
+      pointer-events: none;
+      transform: scale(var(--ui-scale, 1));
+      transform-origin: bottom center;
     }
 
     .mat-stage {
@@ -473,14 +483,17 @@
       65% { transform: rotate(0.4deg); }
     }
 
-    .right-side-zone {
-      height: 100%;
+.right-side-zone {
+      height: auto; 
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      gap: 24px;
+      gap: 0;
       padding-bottom: 12px;
       position: relative;
+      pointer-events: none;
+      transform: scale(var(--ui-scale, 1));
+      transform-origin: bottom center;
     }
 
     .side-vessel-wrap {
@@ -490,10 +503,18 @@
       align-items: center;
       filter: drop-shadow(0 12px 14px rgba(0,0,0,0.45));
       transition: transform 0.3s ease, margin 0.3s ease;
+      pointer-events: auto;
     }
 
-    .miso-vessel { z-index: 3; }
-    .tea-vessel { z-index: 2; }
+    .miso-vessel {
+      z-index: 4;
+      transform: translate(-6px, 10px) scale(0.95);
+    }
+    .tea-vessel {
+      z-index: 2;
+      margin-left: -45px;
+      transform: translate(12px, -20px) scale(0.86);
+    }
 
     .steam-wrap {
       position: absolute;
@@ -830,14 +851,16 @@
       flex: 0.7;
     }
 
-    @media (max-width: 900px) {
+@media (max-width: 900px) {
       .wall-area {
         flex: 0.95;
       }
+
       .menu-board {
         top: auto;
-        bottom: 22px;
-        transform: translateX(-50%) scale(0.95);
+        bottom: 14px;
+        transform: translateX(-50%) scale(var(--menu-scale, 0.95));
+        transform-origin: bottom center;
       }
 
       .counter-table {
@@ -895,9 +918,10 @@
         flex: 1.05;
       }
       .menu-board {
-        bottom: 20px;
+        bottom: 12px;
         gap: 10px;
-        transform: translateX(-50%) scale(0.92);
+        transform: translateX(-50%) scale(var(--menu-scale, 0.92));
+        transform-origin: bottom center;
       }
       .top-right-controls { top: 12px; right: 12px; gap: 6px; }
       .checkout-btn { height: 36px; padding: 0 12px; font-size: 12px; }
@@ -2065,8 +2089,9 @@ const otherCandidates = SUSHI_MENU.filter(
     let eatenHistoryMap = new Map(); // { key: { name, price, count } }
     const MAX_PLATES_LIMIT = 25;
 
-    const RAIL_SPEED = 0.9;
+const RAIL_SPEED = 0.9;
     const PLATE_SPACING = 190;
+    let currentUiScale = 1;
     let beltOffsetX = 0;
     let lastSpawnedKey = null;
 
@@ -2397,13 +2422,13 @@ const otherCandidates = SUSHI_MENU.filter(
       return wrapper;
     }
 
-    function spawnPlateAt(xPos) {
+    function spawnPlateAt(baseXPos) {
       const data = generatePlateData();
       const el = buildPlateElement(data);
-      el.style.left = `${xPos}px`;
+      el.style.left = `${baseXPos * currentUiScale}px`;
       platesLayer.appendChild(el);
 
-      const plateObj = { el, data, x: xPos };
+      const plateObj = { el, data, x: baseXPos };
       el.addEventListener('click', () => handlePickPlate(plateObj));
       activePlatesOnRail.push(plateObj);
     }
@@ -2411,13 +2436,12 @@ const otherCandidates = SUSHI_MENU.filter(
     function enqueueRequestedSushi(menuItem) {
       const offscreenPlates = activePlatesOnRail.filter(p => p.x < -40 && !p.isOrdered);
       if (offscreenPlates.length > 0) {
-
         offscreenPlates.sort((a, b) => b.x - a.x);
         const targetPlate = offscreenPlates[0];
 
         const newData = createPlateDataFromMenu(menuItem);
         const newEl = buildPlateElement(newData);
-        newEl.style.left = `${targetPlate.x}px`;
+        newEl.style.left = `${targetPlate.x * currentUiScale}px`;
         platesLayer.replaceChild(newEl, targetPlate.el);
 
         targetPlate.data = newData;
@@ -2430,25 +2454,25 @@ const otherCandidates = SUSHI_MENU.filter(
     }
 
     function initRail() {
-      const screenWidth = window.innerWidth;
-      const count = Math.ceil(screenWidth / PLATE_SPACING) + 2;
+      const logicalScreenWidth = window.innerWidth / currentUiScale;
+      const count = Math.ceil(logicalScreenWidth / PLATE_SPACING) + 2;
       for (let i = -1; i < count; i++) {
         spawnPlateAt(i * PLATE_SPACING);
       }
     }
 
     function animateRail() {
-      const screenWidth = window.innerWidth;
+      const logicalScreenWidth = window.innerWidth / currentUiScale;
 
       beltOffsetX = (beltOffsetX + RAIL_SPEED) % 42;
-      railBelt.style.backgroundPositionX = `${beltOffsetX}px`;
+      railBelt.style.backgroundPositionX = `${beltOffsetX * currentUiScale}px`;
 
       for (let i = activePlatesOnRail.length - 1; i >= 0; i--) {
         const item = activePlatesOnRail[i];
         item.x += RAIL_SPEED;
-        item.el.style.left = `${item.x}px`;
+        item.el.style.left = `${item.x * currentUiScale}px`;
 
-        if (item.x > screenWidth + 120) {
+        if (item.x > logicalScreenWidth + 120) {
           item.el.remove();
           activePlatesOnRail.splice(i, 1);
         }
@@ -2460,6 +2484,10 @@ const otherCandidates = SUSHI_MENU.filter(
         const leftmostX = Math.min(...activePlatesOnRail.map(p => p.x));
         if (leftmostX > -PLATE_SPACING) {
           spawnPlateAt(leftmostX - PLATE_SPACING);
+        }
+        const rightmostX = Math.max(...activePlatesOnRail.map(p => p.x));
+        if (rightmostX < logicalScreenWidth) {
+          spawnPlateAt(rightmostX + PLATE_SPACING);
         }
       }
 
@@ -3091,6 +3119,44 @@ resetShopBtn.addEventListener('click', () => {
       orderModal.classList.remove('open');
       showToast(`🔔 [${selectedOrderItem.name}] 주문 완료! 곧 레일 왼쪽에서 등장합니다.`);
     });
+
+function updateWindowScale() {
+      const w = window.innerWidth;
+      const h = window.innerHeight;
+      const isMobileLayout = w <= 900;
+
+      let uiScale = 1;
+      if (!isMobileLayout) {
+        const scaleW = w / 920;
+        const scaleH = h / 600;
+        uiScale = Math.max(1, Math.min(Math.min(scaleW, scaleH), 2.2));
+      }
+      
+      currentUiScale = uiScale;
+      document.documentElement.style.setProperty('--ui-scale', uiScale.toFixed(3));
+
+      const wallEl = document.querySelector('.wall-area');
+      if (wallEl) {
+        const wallHeight = wallEl.clientHeight;
+        const plaqueBaseHeight = 118; 
+
+        if (isMobileLayout) {
+          const safeWallHeight = Math.max(40, wallHeight - 68);
+          const maxMobileScale = safeWallHeight / plaqueBaseHeight;
+          const baseMobileTarget = w <= 560 ? 0.92 : 0.95;
+          const finalMenuScale = Math.max(0.45, Math.min(baseMobileTarget, maxMobileScale));
+          document.documentElement.style.setProperty('--menu-scale', finalMenuScale.toFixed(3));
+        } else {
+          const maxPcScale = (wallHeight * 0.74) / plaqueBaseHeight;
+          const finalMenuScale = Math.max(0.55, Math.min(uiScale, maxPcScale));
+          document.documentElement.style.setProperty('--menu-scale', finalMenuScale.toFixed(3));
+        }
+      }
+    }
+
+    window.addEventListener('resize', updateWindowScale);
+    window.addEventListener('DOMContentLoaded', () => requestAnimationFrame(updateWindowScale));
+    updateWindowScale();
   </script>
 </body>
 </html>
