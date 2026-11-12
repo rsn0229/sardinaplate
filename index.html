@@ -2462,10 +2462,10 @@ const RAIL_SPEED = 0.9;
       }
     }
 
-    function animateRail() {
+function animateRail() {
       const logicalScreenWidth = window.innerWidth / currentUiScale;
 
-beltOffsetX = (beltOffsetX + RAIL_SPEED) % 42;
+      beltOffsetX = (beltOffsetX + RAIL_SPEED) % 42;
       railBelt.style.backgroundPositionX = `${beltOffsetX * currentUiScale}px`;
       railBelt.style.backgroundSize = `${42 * currentUiScale}px 100%`;
 
@@ -2486,10 +2486,6 @@ beltOffsetX = (beltOffsetX + RAIL_SPEED) % 42;
         const leftmostX = Math.min(...activePlatesOnRail.map(p => p.x));
         if (leftmostX > -PLATE_SPACING) {
           spawnPlateAt(leftmostX - PLATE_SPACING);
-        }
-        const rightmostX = Math.max(...activePlatesOnRail.map(p => p.x));
-        if (rightmostX < logicalScreenWidth) {
-          spawnPlateAt(rightmostX + PLATE_SPACING);
         }
       }
 
@@ -3136,6 +3132,20 @@ function updateWindowScale() {
       
       currentUiScale = uiScale;
       document.documentElement.style.setProperty('--ui-scale', uiScale.toFixed(3));
+
+      if (activePlatesOnRail.length > 0) {
+        const logicalScreenWidth = w / currentUiScale;
+        let leftmostX = Math.min(...activePlatesOnRail.map(p => p.x));
+        while (leftmostX > -PLATE_SPACING) {
+          leftmostX -= PLATE_SPACING;
+          spawnPlateAt(leftmostX);
+        }
+        let rightmostX = Math.max(...activePlatesOnRail.map(p => p.x));
+        while (rightmostX < logicalScreenWidth) {
+          rightmostX += PLATE_SPACING;
+          spawnPlateAt(rightmostX);
+        }
+      }
 
       const wallEl = document.querySelector('.wall-area');
       if (wallEl) {
